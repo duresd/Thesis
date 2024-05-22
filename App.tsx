@@ -8,7 +8,7 @@ function App({ children }: PropsWithChildren) {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
     const dispatch = useDispatch();
     const { i18n } = useTranslation();
-
+    // asdsadsadas
     useEffect(() => {
         dispatch(toggleTheme(localStorage.getItem('theme') || themeConfig.theme));
         dispatch(toggleMenu(localStorage.getItem('menu') || themeConfig.menu));
@@ -25,9 +25,8 @@ function App({ children }: PropsWithChildren) {
 
     return (
         <div
-            className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
-                themeConfig.rtlClass
-            } main-section relative font-nunito text-sm font-normal antialiased`}
+            className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${themeConfig.rtlClass
+                } main-section relative font-nunito text-sm font-normal antialiased`}
         >
             {children}
         </div>
