@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  Patient_id    String          @id @default(auto()) @map("_id") @db.ObjectId
+  Patient_Name  String
+  Regis_Num     String
+  Phone_Num     String          @unique
+  Gender        String
+  Emerg_Name    String
+  Emerg_PNum    String
+  Is_Filled     Boolean
+  questionnaire Questionnaire[]
+  appointment   Appointment[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Questions {
+  Question_ID   String          @id @default(auto()) @map("_id") @db.ObjectId
+  Question      String
+  questionnaire Questionnaire[]
+}
+
+model Questionnaire {
+  Questionnaire_Id String    @id @default(auto()) @map("_id") @db.ObjectId
+  Question_Id      String    @db.ObjectId
+  Question         Questions @relation(fields: [Question_Id], references: [Question_ID])
+  Patient_id       String    @db.ObjectId
+  Patient          Patient   @relation(fields: [Patient_id], references: [Patient_id])
+  Answer           String
+}
+
+model Doctor {
+  Doctor_id      String        @id @default(auto()) @map("_id") @db.ObjectId
+  Doctor_Name    String
+  Profession_Id  String        @db.ObjectId
+  Profession     Profession    @relation(fields: [Profession_Id], references: [Profession_id])
+  Doctor_Pnum    String        @unique
+  Doctor_Rnum    String
+  Gender         String
+  Role           Role          @default(Doctor)
+  hashedPassword String
+  created_At     DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  appointment    Appointment[]
+}
+
+enum Role {
+  Employee
+  Doctor
+}
+
+model Profession {
+  Profession_id   String   @id @default(auto()) @map("_id") @db.ObjectId
+  Profession_Name String
+  Doctor          Doctor[]
+}
+
+model Employee {
+  Employee_Id    String        @id @default(auto()) @map("_id") @db.ObjectId
+  Employee_Name  String
+  Employee_Pnum  String        @unique
+  hashedPassword String
+  Role           Role          @default(Employee)
+  appointment    Appointment[]
+}
+
+model Status {
+  Status_Id   String        @id @default(auto()) @map("_id") @db.ObjectId
+  Status_Name String
+  appointment Appointment[]
+}
+
+model Patient_history {
+  History_Id     String      @id @default(auto()) @map("_id") @db.ObjectId
+  Appointment_Id String      @db.ObjectId
+  Appointment    Appointment @relation(fields: [Appointment_Id], references: [Appointment_Id])
+  Description    String
+  created_At     DateTime    @default(now())
+}
+
+model Treatment {
+  Treatment_Id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  Treatment_Name        String
+  Treatment_Category_Id String             @db.ObjectId
+  Category              Treatment_Category @relation(fields: [Treatment_Category_Id], references: [Category_Id])
+}
+
+model Treatment_Category {
+  Category_Id   String        @id @default(auto()) @map("_id") @db.ObjectId
+  Category_Name String
+  appointment   Appointment[]
+  Treatment     Treatment[]
+}
+
+model Appointment {
+  Appointment_Id  String             @id @default(auto()) @map("_id") @db.ObjectId
+  Startdate       DateTime
+  Enddate         DateTime
+  Category_Id     String             @db.ObjectId
+  Category        Treatment_Category @relation(fields: [Category_Id], references: [Category_Id])
+  Doctor_Id       String             @db.ObjectId
+  Doctor          Doctor             @relation(fields: [Doctor_Id], references: [Doctor_id])
+  Patient_Id      String             @db.ObjectId
+  Patient         Patient            @relation(fields: [Patient_Id], references: [Patient_id])
+  Description     String
+  Employee_Id     String             @db.ObjectId
+  Employee        Employee           @relation(fields: [Employee_Id], references: [Employee_Id])
+  Status_id       String             @db.ObjectId
+  Status          Status             @relation(fields: [Status_id], references: [Status_Id])
+  created_At      DateTime           @default(now())
+  Patient_history Patient_history[]
+}
