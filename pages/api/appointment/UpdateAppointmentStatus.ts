@@ -5,6 +5,7 @@ interface UpdateAppointmentStatusRequest {
     appointmentId: string;
     statusId: string;
     description: string;
+    doctorId: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,10 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { appointmentId, statusId, description }: UpdateAppointmentStatusRequest = req.body;
+        const { doctorId, appointmentId, statusId, description }: UpdateAppointmentStatusRequest = req.body;
 
-        if (!appointmentId || !statusId || !description) {
-            return res.status(400).json({ error: 'Appointment ID, status ID, and description are required.' });
+        if (!doctorId || !appointmentId || !statusId || !description) {
+            return res.status(400).json({ error: 'doctorId, appointmentId, statusId, and description are required fields.' });
         }
 
         const existingAppointment = await prisma.appointment.findUnique({
@@ -34,7 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 Appointment_Id: appointmentId,
             },
             data: {
+                Doctor_Id: doctorId,
                 Status_id: statusId,
+                Description: description,
             },
         });
 
@@ -45,9 +48,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });
 
-        return res.status(200).json({ message: 'Appointment status updated successfully', appointment: updatedAppointment, history: createdHistory });
+        return res.status(200).json({ message: 'Doctor, status, and description updated successfully', appointment: updatedAppointment, history: createdHistory });
     } catch (error) {
-        console.error('Error updating appointment status:', error);
+        console.error('Error updating appointment:', error);
         return res.status(500).json({ message: 'Server Error' });
     }
 }

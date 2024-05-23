@@ -67,7 +67,7 @@ const Calendar: React.FC = () => {
             case 'Хүлээгдэж буй':
                 return '#0d6efd'; // Primary color
             case 'Цуцалсан':
-                return 'gray'; // Danger color
+                return '#7939AC '; // Danger color
             case 'Дууссан':
                 return '#198754'; // Custom success color
             default:
@@ -106,7 +106,7 @@ const Calendar: React.FC = () => {
                                 <div>Дууссан</div>
                             </div>
                             <div className="flex items-center">
-                                <div className="h-2.5 w-2.5 rounded-sm bg-danger ltr:mr-2 rtl:ml-2"></div>
+                                <div className="h-2.5 w-2.5 rounded-sm bg-secondary ltr:mr-2 rtl:ml-2"></div>
                                 <div>Цуцалсан</div>
                             </div>
                         </div>

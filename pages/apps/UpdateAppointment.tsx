@@ -6,6 +6,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import IconArrowBackward from '@/components/Icon/IconArrowBackward';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { FormEvent, ChangeEvent } from 'react';
 
 interface Appointment {
     Appointment_Id: number;
@@ -33,6 +34,15 @@ interface Appointment {
     created_At: string;
 }
 
+interface Doctor {
+    Doctor_id: string;
+    Doctor_Name: string;
+}
+interface Status {
+    Status_Id: string;
+    Status_Name: string;
+}
+
 const UpdateAppointment = () => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
@@ -40,13 +50,13 @@ const UpdateAppointment = () => {
     const [appointment, setAppointment] = useState<Appointment | null>(null);
 
     const [formData, setFormData] = useState({
-        Startdate: '',
-        Enddate: '',
-        Status_Name: '',
-        Doctor_Name: '',
-        Patient_Id: '',
-        Category_Name: '',
-        Description: '',
+        startDate: '',
+        endDate: '',
+        doctorId: '',
+        patientId: '',
+        categoryId: '',
+        statusId: '',
+        description: '',
     });
 
     const router = useRouter();
@@ -59,6 +69,33 @@ const UpdateAppointment = () => {
         }
     }, [dispatch, AppointmentID]);
 
+    const [doctor, setDoctor] = useState<Doctor[]>([]);
+    const [status, setStatus] = useState<Status[]>([]);
+
+    useEffect(() => {
+        const fetchDoctors = async () => {
+            try {
+                const response = await axios.get('/api/doctor/GetDoctorList');
+                setDoctor(response.data);
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+            }
+        };
+        fetchDoctors();
+    }, []);
+
+    useEffect(() => {
+        const fetchStatuses = async () => {
+            try {
+                const response = await axios.get('/api/status/GetStatus');
+                setStatus(response.data);
+            } catch (error) {
+                console.error('Error fetching statuses:', error);
+            }
+        };
+        fetchStatuses();
+    }, []);
+
     const fetchAppointmentDetail = async () => {
         try {
             setLoading(true);
@@ -69,13 +106,13 @@ const UpdateAppointment = () => {
             const data = await response.json();
             setAppointment(data);
             setFormData({
-                Startdate: new Date(data.Startdate).toISOString().slice(0, 16),
-                Enddate: new Date(data.Enddate).toISOString().slice(0, 16),
-                Status_Name: data.Status.Status_Name,
-                Doctor_Name: data.Doctor.Doctor_Name,
-                Patient_Id: data.Patient.Patient_id,
-                Category_Name: data.Category.Category_Name,
-                Description: data.Description,
+                startDate: new Date(data.Startdate).toISOString().slice(0, 16),
+                endDate: new Date(data.Enddate).toISOString().slice(0, 16),
+                doctorId: data.Doctor.Doctor_id,
+                patientId: data.Patient.Patient_id,
+                categoryId: data.Category.Category_Id,
+                statusId: data.Status.Status_Id,
+                description: data.Description,
             });
         } catch (error) {
             if (error instanceof Error) {
@@ -97,10 +134,20 @@ const UpdateAppointment = () => {
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.put(`/api/appointment/UpdateAppointment?id=${AppointmentID}`, formData);
+            const updatedData = {
+                doctorId: formData.doctorId,
+                statusId: formData.statusId,
+                description: formData.description,
+            };
+
+            const response = await axios.put(`/api/appointment/UpdateAppointmentStatus`, {
+                ...updatedData,
+                appointmentId: AppointmentID,
+            });
+
             if (response.status === 200) {
                 showMessage('Appointment updated successfully');
                 router.push('/apps/calendar');
@@ -137,11 +184,16 @@ const UpdateAppointment = () => {
 
     return (
         <>
-            <Link href="/apps/calendar">
-                <button type="button" className="btn btn-primary !mt-6 mr-2 mb-5">
-                    <IconArrowBackward />
-                </button>
-            </Link>
+            <ul className="flex space-x-2 rtl:space-x-reverse">
+                <li>
+                    <Link href="/apps/calendar" className="text-primary hover:underline">
+                        Цаг захиалга
+                    </Link>
+                </li>
+                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                    <span>Цаг захиалгын төлөв</span>
+                </li>
+            </ul>
 
             <div className="panel" id="forms_grid">
                 <div className="mb-5 flex items-center justify-between">
@@ -155,8 +207,8 @@ const UpdateAppointment = () => {
                                 <input
                                     type="datetime-local"
                                     id="startDatetimeInput"
-                                    name="Startdate"
-                                    value={formData.Startdate}
+                                    name="startDate"
+                                    value={formData.startDate}
                                     onChange={handleInputChange}
                                     className="form-input"
                                 />
@@ -166,8 +218,8 @@ const UpdateAppointment = () => {
                                 <input
                                     type="datetime-local"
                                     id="endDatetimeInput"
-                                    name="Enddate"
-                                    value={formData.Enddate}
+                                    name="endDate"
+                                    value={formData.endDate}
                                     onChange={handleInputChange}
                                     className="form-input"
                                 />
@@ -178,8 +230,8 @@ const UpdateAppointment = () => {
                                 <label htmlFor="patientSelect">Өвчтөн сонгоно уу</label>
                                 <select
                                     id="patientSelect"
-                                    name="Patient_Id"
-                                    value={formData.Patient_Id}
+                                    name="patientId"
+                                    value={formData.patientId}
                                     onChange={handleInputChange}
                                     className="form-select text-sm"
                                 >
@@ -191,11 +243,43 @@ const UpdateAppointment = () => {
                                 </select>
                             </div>
                             <div>
+                                <label htmlFor="doctorSelect">Эмч сонгоно уу</label>
+                                <select
+                                    id="doctorSelect"
+                                    name="doctorId"
+                                    value={formData.doctorId}
+                                    onChange={handleInputChange}
+                                    className="form-select text-sm"
+                                >
+                                    {doctor.map((doc) => (
+                                        <option key={doc.Doctor_id} value={doc.Doctor_id}>
+                                            {doc.Doctor_Name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="statusSelect">Төлөв</label>
+                                <select
+                                    id="statusSelect"
+                                    name="statusId"
+                                    value={formData.statusId}
+                                    onChange={handleInputChange}
+                                    className="form-select text-sm"
+                                >
+                                    {status.map((stat) => (
+                                        <option key={stat.Status_Id} value={stat.Status_Id}>
+                                            {stat.Status_Name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
                                 <label htmlFor="description">Нэмэлт тайлбар</label>
                                 <textarea
-                                    name="Description"
+                                    name="description"
                                     id="description"
-                                    value={formData.Description}
+                                    value={formData.description}
                                     onChange={handleInputChange}
                                     className="form-textarea"
                                     placeholder="Тайлбар оруулна уу"
