@@ -27,7 +27,7 @@ interface Appointment {
 
 const Index = () => {
     const dispatch = useDispatch();
-    
+
     useEffect(() => {
         dispatch(setPageTitle('Dental'));
     }, [dispatch]);
@@ -76,11 +76,11 @@ const Index = () => {
         series: [
             {
                 name: 'Хүлээгдэж буй',
-                data: [1680, 1680, 1550, 1780, 1550, 1700, 1900, 1600, 1500, 1200,1850,1900],
+                data: [1680, 1680, 1550, 1780, 1550, 1700, 1900, 1600, 1500, 1200, 1850, 1900],
             },
             {
                 name: 'Дууссан',
-                data: [1650, 1750, 1620, 1730, 1600, 1950, 1650, 1700, 1600, 1900,1800,1570],
+                data: [1650, 1750, 1620, 1730, 1600, 1950, 1650, 1700, 1600, 1900, 1800, 1570],
             },
             {
                 name: 'Цуцалсан',
@@ -353,7 +353,7 @@ const Index = () => {
                 <div className="mb-6 grid gap-6 xl:grid-cols-3">
                     <div className="panel h-full xl:col-span-2">
                         <div className="mb-5 flex items-center justify-between dark:text-white-light">
-                            <h5 className="text-lg font-semibold">Цаг захиалга</h5>
+                            <h5 className="text-lg font-semibold">Хийгдсэн эмчилгээ</h5>
                             <div className="dropdown">
                                 <Dropdown
                                     offset={[0, 1]}

@@ -245,16 +245,15 @@ const Export = () => {
                         highlightOnHover
                         records={appointments}
                         columns={[
-                            { accessor: 'Appointment_Id', title: 'ID', sortable: true },
-                            { accessor: 'Startdate', title: 'Start Date', sortable: true },
-                            { accessor: 'Enddate', title: 'End Date', sortable: true },
-                            { accessor: 'Doctor.Doctor_Name', title: 'Doctor', sortable: true },
-                            { accessor: 'Patient.Phone_Num', title: 'Phone', sortable: true },
-                            { accessor: 'Category.Category_Name', title: 'Category', sortable: true },
-                            { accessor: 'Employee.Employee_Name', title: 'Employee ID', sortable: true },
-                            { accessor: 'Status.Status_Name', title: 'Status', sortable: true },
-                            { accessor: 'Description', title: 'Description', sortable: true },
-                            { accessor: 'created_At', title: 'Created At', sortable: true },
+                            { accessor: 'Patient.Patient_Name', title: 'Өвчтөн', sortable: true },
+                            { accessor: 'Category.Category_Name', title: 'Эмчилгээний ангилал', sortable: true },
+                            { accessor: 'Doctor.Doctor_Name', title: 'Эмчийн нэр', sortable: true },
+                            { accessor: 'Startdate', title: 'Эхэлсэн цаг', sortable: true },
+                            { accessor: 'Enddate', title: 'Дууссан цаг', sortable: true },
+                            { accessor: 'Status.Status_Name', title: 'Цаг захиалгын төлөв', sortable: true },
+                            { accessor: 'Description', title: 'Эмчилгээний  дэлгэрэнгүй тайлбар', sortable: true },
+                            { accessor: 'Employee.Employee_Name', title: 'Цаг захиалга бүртэсэн ажилтан', sortable: true },
+                            { accessor: 'created_At', title: 'Цаг зхиалга үүсгэгдсэн огноо', sortable: true },
                         ]}
                         totalRecords={appointments.length}
                         recordsPerPage={pageSize}
