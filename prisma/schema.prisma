@@ -91,6 +91,7 @@ model Treatment {
   Treatment_Name        String
   Treatment_Category_Id String             @db.ObjectId
   Category              Treatment_Category @relation(fields: [Treatment_Category_Id], references: [Category_Id])
+  appointment           Appointment[]
 }
 
 model Treatment_Category {
@@ -106,6 +107,8 @@ model Appointment {
   Enddate         DateTime
   Category_Id     String             @db.ObjectId
   Category        Treatment_Category @relation(fields: [Category_Id], references: [Category_Id])
+  Treatment_Id    String             @db.ObjectId
+  Treatment       Treatment          @relation(fields: [Treatment_Id], references: [Treatment_Id])
   Doctor_Id       String             @db.ObjectId
   Doctor          Doctor             @relation(fields: [Doctor_Id], references: [Doctor_id])
   Patient_Id      String             @db.ObjectId

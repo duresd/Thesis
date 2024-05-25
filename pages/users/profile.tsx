@@ -5,17 +5,36 @@ import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useEffect, useState } from 'react';
 import IconPencilPaper from '@/components/Icon/IconPencilPaper';
-import IconCalendar from '@/components/Icon/IconCalendar';
-import IconMenuUsers from '@/components/Icon/Menu/IconMenuUsers';
-import IconMapPin from '@/components/Icon/IconMapPin';
 import IconNotes from '@/components/Icon/IconNotes';
 import IconUsers from '@/components/Icon/IconUsers';
 import IconPhone from '@/components/Icon/IconPhone';
-import IconTwitter from '@/components/Icon/IconTwitter';
-import IconDribbble from '@/components/Icon/IconDribbble';
-import IconGithub from '@/components/Icon/IconGithub';
 import IconClock from '@/components/Icon/IconClock';
 import { useRouter } from 'next/router';
+import IconCircleCheck from '@/components/Icon/IconCircleCheck';
+
+interface Patient_history {
+    History_Id: string,
+    Appointment_Id: string,
+    Appointment: {
+        Startdate: string,
+        Treatment: {
+            Treatment_Name: string,
+        },
+        Category: {
+            Category_Name: string,
+        },
+        Doctor: {
+            Doctor_Name: string,
+        },
+    }
+    Description: string,
+}
+interface Appointment {
+    appointment: {
+        Appointment_Id: string,
+        Startdate: string,
+    }
+}
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -31,12 +50,14 @@ const Profile = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [emergencyContactName, setEmergencyContactName] = useState<string>('');
     const [emergencyContactNumber, setEmergencyContactNumber] = useState<string>('');
-
+    const [isFilled, setIsFilled] = useState<boolean>(false); // Initialize as boolean
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
 
     useEffect(() => {
         dispatch(setPageTitle('Өвчтөнүүд'));
         if (patientId) {
             fetchPatientDetails();
+            fetchPatientHistory();
         }
     }, [dispatch, patientId]);
 
@@ -48,7 +69,7 @@ const Profile = () => {
                 throw new Error('Failed to fetch patient details');
             }
             const data = await response.json();
-            setPatient(data);
+            // setPatient(data);
             // Populate form inputs with patient details
             setName(data.Patient_Name);
             setRegistrationNumber(data.Regis_Num);
@@ -56,6 +77,8 @@ const Profile = () => {
             setPhoneNumber(data.Phone_Num);
             setEmergencyContactName(data.Emerg_Name);
             setEmergencyContactNumber(data.Emerg_PNum);
+            setIsFilled(data.Is_Filled);
+            setAppointments(data.appointments);
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -66,9 +89,38 @@ const Profile = () => {
             setLoading(false);
         }
     };
-    console.log(registrationNumber)
+
+    const [patienthistory, setPatientHistory] = useState<Patient_history[]>([]);
+    const fetchPatientHistory = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`/api/patienthistory/GetPatienHistorybyID?id=${patientId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch patient details');
+            }
+            const data = await response.json();
+            setPatientHistory(data);
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An unknown error occurred');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
     return (
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -93,7 +145,7 @@ const Profile = () => {
                         <div className="mb-5">
                             <div className="flex flex-col items-center justify-center">
                                 <img src="/assets/images/lightbox2.jpeg" alt="img" className="mb-5 h-24 w-24 rounded-full  object-cover" />
-                                <p className="text-xl font-semibold text-primary" >{name}</p>
+                                <p className="text-xl font-semibold text-primary">{name}</p>
                             </div>
                             <ul className="m-auto mt-5 flex max-w-[160px] flex-col space-y-4 font-semibold text-white-dark">
                                 <li className="flex items-center gap-2">
@@ -101,8 +153,8 @@ const Profile = () => {
                                     {registrationNumber}
                                 </li>
                                 <li className="flex items-center gap-2">
-                                    <IconMapPin className="shrink-0" />
-                                    Баянзүрх Дүүрэг 6-р хороо 23-р байр 41 тоот
+                                    <IconCircleCheck className="shrink-0" />
+                                    {isFilled ? 'Эрүүл мэндийн асуулга бөглсөн' : 'Эрүүд мэндийн асуулга бөглөөгүй'} {/* Display isFilled as Yes or No */}
                                 </li>
                                 <li>
                                     <button className="flex items-center gap-2">
@@ -117,23 +169,6 @@ const Profile = () => {
                                     </span>
                                 </li>
                             </ul>
-                            <ul className="mt-7 flex items-center justify-center gap-2">
-                                <li>
-                                    <button className="btn btn-info flex h-10 w-10 items-center justify-center rounded-full p-0">
-                                        <IconTwitter className="w-5 h-5" />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-danger flex h-10 w-10 items-center justify-center rounded-full p-0">
-                                        <IconDribbble />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-dark flex h-10 w-10 items-center justify-center rounded-full p-0">
-                                        <IconGithub />
-                                    </button>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                     <div className="panel lg:col-span-2 xl:col-span-3">
@@ -145,42 +180,42 @@ const Profile = () => {
                                 <table className="whitespace-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>Эмчилгээний нэр</th>
-                                            <th>Үйл явц</th>
-                                            <th>Хувь</th>
-                                            <th className="text-center">Эмчилгээ хийлгэсэн өдөр</th>
+                                            <th className="text-info">Эмчилгээний ангилал</th>
+                                            <th className="text-info">Эмчилгээний төрөл</th>
+                                            <th className="text-info">Эмчилгээ хийлгэсэн эмч</th>
+                                            <th className="text-info">Эмчилгээ хийлгэсэн өдөр</th>
                                         </tr>
                                     </thead>
                                     <tbody className="dark:text-white-dark">
                                         <tr>
-                                            <td>Шүд цайруулах эмчилгээ</td>
                                             <td>
-                                                <div className="flex h-1.5 w-full rounded-full bg-[#ebedf2] dark:bg-dark/40">
-                                                    <div className="w-1/2 rounded-full bg-info"></div>
-                                                </div>
+                                                {patienthistory.map((history) => (
+                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
+                                                        {history.Appointment.Category.Category_Name}
+                                                    </div>
+                                                ))}
                                             </td>
-                                            <td className="text-info">50%</td>
-                                            <td className="text-center">19/04/2024 </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Шүдний чулуу түүх</td>
                                             <td>
-                                                <div className="flex h-1.5 w-full rounded-full bg-[#ebedf2] dark:bg-dark/40">
-                                                    <div className="w-[100%] rounded-full bg-success"></div>
-                                                </div>
+                                                {patienthistory.map((history) => (
+                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
+                                                        {history.Appointment.Treatment.Treatment_Name}
+                                                    </div>
+                                                ))}
                                             </td>
-                                            <td className="text-success">100%</td>
-                                            <td className="text-center">15/04/2024</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Гажиг заслын оношилгоо</td>
-                                            <td>
-                                                <div className="flex h-1.5 w-full rounded-full bg-[#ebedf2] dark:bg-dark/40">
-                                                    <div className="w-[100%] rounded-full  bg-success"></div>
-                                                </div>
+                                            <td className="text-center">
+                                                {patienthistory.map((history) => (
+                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
+                                                        {history.Appointment.Doctor.Doctor_Name}
+                                                    </div>
+                                                ))}
                                             </td>
-                                            <td className="text-success">100%</td>
-                                            <td className="text-center">20/03/2024</td>
+                                            <td className="text-center">
+                                                {patienthistory.map((history) => (
+                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
+                                                        {history.Appointment.Startdate}
+                                                    </div>
+                                                ))}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -189,7 +224,6 @@ const Profile = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-
                     <div className="panel">
                         <div className="mb-10 flex items-center justify-between">
                             <h5 className="text-lg font-semibold dark:text-white-light">Цаг захиалгын түүх</h5>
@@ -197,9 +231,11 @@ const Profile = () => {
                         </div>
                         <div className="group">
                             <ul className="mb-7 list-inside list-disc space-y-2 font-semibold text-white-dark">
-                                <li>19/04/2024 12:00</li>
-                                <li>15/04/2024 14:00</li>
-                                <li>20/03/2024 12:00</li>
+                                <li>{appointments && appointments.map((appointment) => (
+                                    <div key={appointment.appointment.Appointment_Id}>
+                                        {appointment.appointment.Startdate}
+                                    </div>
+                                ))}</li>
                             </ul>
                             <div className="mb-4 flex items-center justify-between font-semibold">
                                 <p className="flex items-center rounded-full bg-dark px-2 py-1 text-xs font-semibold text-white-light">
@@ -213,95 +249,6 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <div className="panel">
-                        <div className="mb-5 flex items-center justify-between">
-                            <h5 className="text-lg font-semibold dark:text-white-light">Payment History</h5>
-                        </div>
-                        <div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="font-semibold text-[#515365] dark:text-white-dark">
-                                        March
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown
-                                                offset={[0, 5]}
-                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                btnClassName="hover:text-primary"
-                                                button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-                                            >
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="font-semibold text-[#515365] dark:text-white-dark">
-                                        February
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown
-                                                offset={[0, 5]}
-                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-                                            >
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex items-center justify-between py-2">
-                                    <h6 className="font-semibold text-[#515365] dark:text-white-dark">
-                                        January
-                                        <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-                                    </h6>
-                                    <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-                                        <p className="font-semibold">90%</p>
-                                        <div className="dropdown ltr:ml-4 rtl:mr-4">
-                                            <Dropdown
-                                                offset={[0, 5]}
-                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-                                            >
-                                                <ul className="!min-w-[150px]">
-                                                    <li>
-                                                        <button type="button">View Invoice</button>
-                                                    </li>
-                                                    <li>
-                                                        <button type="button">Download Invoice</button>
-                                                    </li>
-                                                </ul>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> */}
                 </div>
             </div>
         </div>

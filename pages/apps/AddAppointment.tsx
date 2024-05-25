@@ -4,35 +4,16 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import axios from 'axios';
+import { Doctor, Patient, Treatment, Treatment_Category } from '@prisma/client';
 
 interface FormData {
     Startdate: string;
     Enddate: string;
     Category_Id: string;
+    Treatment_Id: string;
     Doctor_Id: string;
     Patient_Id: string;
     Description: string;
-}
-
-interface Patient {
-    Patient_id: string;
-    Patient_Name: string;
-    Phone_Num: string;
-    Regis_Num: string;
-    Gender: string;
-    Emerg_Name: string;
-    Emerg_PNum: string;
-    Is_Filled: Boolean;
-}
-
-interface Doctor {
-    Doctor_id: string;
-    Doctor_Name: string;
-}
-
-interface Category {
-    Category_Id: string;
-    Category_Name: string;
 }
 
 const AddAppointment = () => {
@@ -46,6 +27,7 @@ const AddAppointment = () => {
         Startdate: new Date().toISOString().slice(0, 16),
         Enddate: new Date().toISOString().slice(0, 16),
         Category_Id: '',
+        Treatment_Id: '',
         Doctor_Id: '',
         Patient_Id: '',
         Description: ''
@@ -53,8 +35,12 @@ const AddAppointment = () => {
 
     const [patients, setPatients] = useState<Patient[]>([]);
     const [doctors, setDoctors] = useState<Doctor[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<Treatment_Category[]>([]);
+    const [treatment, setTreatment] = useState<Treatment[]>([]);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+    const [filteredTreatments, setFilteredTreatments] = useState<Treatment[]>([]);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,6 +53,8 @@ const AddAppointment = () => {
 
                 const categoryResponse = await axios.get('/api/treatmentcategory/GetTreatmentCategory');
                 setCategories(categoryResponse.data);
+                const treatmentResponse = await axios.get('/api/treatment/GetTreatment');
+                setTreatment(treatmentResponse.data);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -83,11 +71,23 @@ const AddAppointment = () => {
             [name]: value,
         });
 
+        if (name === 'Category_Id') {
+            // Filter treatments based on the selected category ID
+            const categoryTreatments = treatment.filter(treatment => treatment.Treatment_Category_Id === value);
+            setFilteredTreatments(categoryTreatments);
+        }
+
+        if (name === 'Doctor_Id') {
+            const doctor = doctors.find(p => p.Doctor_id === value);
+            setSelectedDoctor(doctor || null);
+        }
+
         if (name === 'Patient_Id') {
             const patient = patients.find(p => p.Patient_id === value);
             setSelectedPatient(patient || null);
         }
     };
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -107,19 +107,16 @@ const AddAppointment = () => {
     };
 
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("sdfds");
         const { name, value } = e.target;
-        if (validateTimeRange(value)) {
-            const newStartDate = new Date(value);
-            let newEndDate = new Date(newStartDate.getTime() + 60 * 60 * 1000); // Add one hour
+        const selectedTime = new Date(value).getTime(); // Convert selected time to milliseconds
 
-            // Ensure the end time does not exceed 8 PM
-            const endOfDay = new Date(newStartDate);
-            endOfDay.setHours(20, 0, 0, 0);
+        const startTime = new Date(value);
+        startTime.setHours(10, 0, 0, 0); // Set the start time to 10 AM
+        const endTime = new Date(startTime.getTime() + 10 * 60 * 60 * 1000); // Set the end time to 8 PM
 
-            if (newEndDate > endOfDay) {
-                newEndDate = endOfDay; // Set to 8 PM if it exceeds
-            }
-
+        if (selectedTime >= startTime.getTime() && selectedTime <= endTime.getTime()) {
+            const newEndDate = new Date(selectedTime + 60 * 60 * 1000); // Add one hour to the selected time
             setFormData({
                 ...formData,
                 [name]: value,
@@ -129,6 +126,7 @@ const AddAppointment = () => {
             alert('Please select a time between 10 AM and 8 PM.');
         }
     };
+
 
     return (
         <>
@@ -172,6 +170,17 @@ const AddAppointment = () => {
                                         ))}
                                     </select>
                                 </div>
+                            </div>
+                            <div>
+                                <label htmlFor="treatmentSelect">Эмчилгээний төрөл сонгоно уу</label>
+                                <select id="treatmentSelect" name="Treatment_Id" value={formData.Treatment_Id} onChange={handleChange} className="form-select text-sm">
+                                    <option value="" disabled selected>Сонгоно уу</option>
+                                    {filteredTreatments.map((treatments) => (
+                                        <option key={treatments.Treatment_Id} value={treatments.Treatment_Id}>
+                                            {treatments.Treatment_Name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
@@ -241,6 +250,33 @@ const AddAppointment = () => {
                                     <div>
                                         <label htmlFor="patientEmergnum">Яаралтай үед холбоо барих хүний утас</label>
                                         <input type="text" id="patientEmergnum" value={selectedPatient.Emerg_PNum} readOnly className="form-input" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div className="mb-5 flex items-center justify-between">
+                            <h5 className="text-lg font-semibold dark:text-white-light">Сонгогдсон Эмчийн мэдээлэл</h5>
+                        </div>
+                        <div className="mb-5">
+                            <form className="space-y-5">
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <label htmlFor="patientName">Эмчийн нэр</label>
+                                        <input type="text" id="patientName" value={selectedDoctor?.Doctor_Name} readOnly className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="patientPhone">Утасны дугаар</label>
+                                        <input type="text" id="patientPhone" value={selectedDoctor?.Doctor_Pnum} readOnly className="form-input" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <label htmlFor="patientRnum">Регистрийн дугаар</label>
+                                        <input type="text" id="patientRnum" value={selectedDoctor?.Doctor_Rnum} readOnly className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="patientGender">Хүйс</label>
+                                        <input type="text" id="patientGender" value={selectedDoctor?.Gender} readOnly className="form-input" />
                                     </div>
                                 </div>
                             </form>

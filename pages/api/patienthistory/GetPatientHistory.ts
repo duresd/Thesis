@@ -1,5 +1,7 @@
-import prisma from '@/prisma';
+import { PrismaClient } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
+
+const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'GET') {
@@ -33,7 +35,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         res.status(200).json(History);
     } catch (error) {
-        console.error('Error fetching doctor:', error);
+        console.error('Error fetching patient history:', error);
         res.status(500).json({ error: 'Internal Server Error' });
+    } finally {
+        await prisma.$disconnect();
     }
 }

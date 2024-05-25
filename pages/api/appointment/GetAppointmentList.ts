@@ -66,6 +66,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         Category_Name: true,
                     },
                 },
+                Treatment: {
+                    select: {
+                        Treatment_Name: true,
+                    },
+                },
                 Employee: {
                     select: {
                         Employee_Name: true,

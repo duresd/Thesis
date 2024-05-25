@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { id } = req.query;
 
         if (!id || typeof id !== 'string') {
-            return res.status(400).json({ error: 'Invalid status ID' });
+            return res.status(400).json({ error: 'Invalid profession ID' });
         }
 
         const Profession = await prisma.profession.findUnique({
@@ -22,13 +22,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         if (!Profession) {
-            return res.status(404).json({ error: 'Status not found' });
+            return res.status(404).json({ error: 'Profession not found' });
         }
 
         res.setHeader('Cache-Control', 'no-cache');
         res.status(200).json(Profession);
     } catch (error) {
-        console.error('Error fetching status:', error);
+        console.error('Error fetching profession:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
