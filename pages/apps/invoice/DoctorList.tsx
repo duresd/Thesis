@@ -9,7 +9,8 @@ import IconTrashLines from '@/components/Icon/IconTrashLines';
 import IconPlus from '@/components/Icon/IconPlus';
 import IconEdit from '@/components/Icon/IconEdit';
 import IconEye from '@/components/Icon/IconEye';
-import { string } from 'yup/lib/locale';
+import { useRouter } from 'next/router';
+
 
 interface Doctor {
     Doctor_id: string;
@@ -26,6 +27,8 @@ interface Doctor {
 
 const List = () => {
     const dispatch = useDispatch();
+    const router = useRouter();
+
     useEffect(() => {
         dispatch(setPageTitle('Эмч, мэргэжилтэн'));
     });
@@ -53,7 +56,7 @@ const List = () => {
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState(sortBy(doctor, 'invoice'));
+    const [initialRecords, setInitialRecords] = useState(sortBy(doctor, 'lists'));
     const [records, setRecords] = useState(initialRecords);
     const [selectedRecords, setSelectedRecords] = useState<any>([]);
 
@@ -80,7 +83,7 @@ const List = () => {
                     doctor.Doctor_Name.toLowerCase().includes(search.toLowerCase()) ||
                     doctor.Doctor_Pnum.toLowerCase().includes(search.toLowerCase()) ||
                     doctor.Gender.toLowerCase().includes(search.toLowerCase()) ||
-                    doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase()) 
+                    doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase())
                 );
             });
         });
@@ -116,6 +119,14 @@ const List = () => {
         }
     };
 
+    const handleEditPatient = (Doctor_id: string) => {
+        router.push(`/users/?id=${Doctor_id}`);
+    };
+
+    const handleViewPatient = (Doctor_id: string) => {
+        router.push(`/users/doctorProfile?id=${Doctor_id}`);
+    };
+
     return (
         <div className="panel border-white-light px-0 dark:border-[#1b2e4b]">
             <div className="invoice-table">
@@ -142,9 +153,9 @@ const List = () => {
                         columns={[
                             {
                                 accessor: 'name',
-                                title:'Овог,нэр',
+                                title: 'Овог,нэр',
                                 sortable: true,
-                                render: ({ Doctor_Name}) => (
+                                render: ({ Doctor_Name }) => (
                                     <div className="flex items-center font-semibold">
                                         <div>{Doctor_Name}</div>
                                     </div>
@@ -179,10 +190,10 @@ const List = () => {
                                 textAlignment: 'center',
                                 render: ({ Doctor_id }) => (
                                     <div className="mx-auto flex w-max items-center gap-4">
-                                        <Link href="/users/profile" className="flex hover:text-primary">
+                                        <Link href="/users/doctorProfile" className="flex hover:text-primary" onClick={() => handleViewPatient(Doctor_id)}>
                                             <IconEye />
                                         </Link>
-                                        <Link href="/users/user-account-settings" className="flex hover:text-info">
+                                        <Link href="/users/user-account-settings" className="flex hover:text-info" onClick={() => handleEditPatient(Doctor_id)}>
                                             <IconEdit className="w-4.5 h-4.5" />
                                         </Link>
                                         <button type="button" className="flex hover:text-danger" onClick={(e) => deleteRow(Doctor_id)}>

@@ -19,6 +19,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: {
                 Doctor_id: id,
             },
+            include: {
+                Profession: {
+                    select: {
+                        Profession_Name: true,
+                    },
+                },
+                appointment: {
+                    select: {
+                        Appointment_Id: true,
+                        Startdate: true,
+                        Enddate: true,
+                        Patient: {
+                            select: {
+                                Patient_id: true,
+                                Patient_Name: true,
+                            },
+                        },
+                        Category: {
+                            select: {
+                                Category_Id: true,
+                                Category_Name: true,
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         if (!Doctor) {

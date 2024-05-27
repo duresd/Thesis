@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const { doctorId, appointmentId, statusId, description }: UpdateAppointmentStatusRequest = req.body;
 
-        if (!doctorId || !appointmentId || !statusId || !description) {
+        if (!statusId) {
             return res.status(400).json({ error: 'doctorId, appointmentId, statusId, and description are required fields.' });
         }
 

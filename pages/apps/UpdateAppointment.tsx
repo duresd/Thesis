@@ -13,6 +13,7 @@ interface Appointment {
     Startdate: string;
     Enddate: string;
     Doctor: {
+        Doctor_id: string;
         Doctor_Name: string;
     };
     Patient: {
@@ -21,6 +22,7 @@ interface Appointment {
         Phone_Num: string;
     };
     Category: {
+        Category_Id: string;
         Category_Name: string;
     };
     Employee: {
@@ -28,6 +30,7 @@ interface Appointment {
     };
     Employee_Id: number;
     Status: {
+        Status_Id: string;
         Status_Name: string;
     };
     Description: string;
@@ -38,6 +41,7 @@ interface Doctor {
     Doctor_id: string;
     Doctor_Name: string;
 }
+
 interface Status {
     Status_Id: string;
     Status_Name: string;
@@ -45,10 +49,12 @@ interface Status {
 
 const UpdateAppointment = () => {
     const dispatch = useDispatch();
+    const router = useRouter();
+    const { id: AppointmentID } = router.query as { id: string };
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [appointment, setAppointment] = useState<Appointment | null>(null);
-
     const [formData, setFormData] = useState({
         startDate: '',
         endDate: '',
@@ -58,9 +64,8 @@ const UpdateAppointment = () => {
         statusId: '',
         description: '',
     });
-
-    const router = useRouter();
-    const { id: AppointmentID } = router.query as { id: string };
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [statuses, setStatuses] = useState<Status[]>([]);
 
     useEffect(() => {
         dispatch(setPageTitle('Өвчтөнүүд'));
@@ -69,14 +74,11 @@ const UpdateAppointment = () => {
         }
     }, [dispatch, AppointmentID]);
 
-    const [doctor, setDoctor] = useState<Doctor[]>([]);
-    const [status, setStatus] = useState<Status[]>([]);
-
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
                 const response = await axios.get('/api/doctor/GetDoctorList');
-                setDoctor(response.data);
+                setDoctors(response.data);
             } catch (error) {
                 console.error('Error fetching doctors:', error);
             }
@@ -88,7 +90,7 @@ const UpdateAppointment = () => {
         const fetchStatuses = async () => {
             try {
                 const response = await axios.get('/api/status/GetStatus');
-                setStatus(response.data);
+                setStatuses(response.data);
             } catch (error) {
                 console.error('Error fetching statuses:', error);
             }
@@ -126,7 +128,7 @@ const UpdateAppointment = () => {
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
@@ -137,15 +139,11 @@ const UpdateAppointment = () => {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const updatedData = {
+            const response = await axios.put(`/api/appointment/UpdateAppointmentStatus`, {
+                appointmentId: AppointmentID,
                 doctorId: formData.doctorId,
                 statusId: formData.statusId,
                 description: formData.description,
-            };
-
-            const response = await axios.put(`/api/appointment/UpdateAppointmentStatus`, {
-                ...updatedData,
-                appointmentId: AppointmentID,
             });
 
             if (response.status === 200) {
@@ -234,6 +232,7 @@ const UpdateAppointment = () => {
                                     value={formData.patientId}
                                     onChange={handleInputChange}
                                     className="form-select text-sm"
+                                    disabled
                                 >
                                     {appointment && (
                                         <option value={appointment.Patient.Patient_id}>
@@ -251,7 +250,7 @@ const UpdateAppointment = () => {
                                     onChange={handleInputChange}
                                     className="form-select text-sm"
                                 >
-                                    {doctor.map((doc) => (
+                                    {doctors.map((doc) => (
                                         <option key={doc.Doctor_id} value={doc.Doctor_id}>
                                             {doc.Doctor_Name}
                                         </option>
@@ -267,7 +266,7 @@ const UpdateAppointment = () => {
                                     onChange={handleInputChange}
                                     className="form-select text-sm"
                                 >
-                                    {status.map((stat) => (
+                                    {statuses.map((stat) => (
                                         <option key={stat.Status_Id} value={stat.Status_Id}>
                                             {stat.Status_Name}
                                         </option>

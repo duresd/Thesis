@@ -63,20 +63,20 @@ const Add = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        
+
 
         try {
             const response = await axios.post('/api/doctor/CreateDoctor', formData);
             console.log('Response:', response.data);
             router.push('/apps/invoice/DoctorList');
             // Handle success
-            
+
         } catch (error) {
             console.error('Error:', error);
             // Handle error
         }
     };
-    
+
 
     return (
         <>
@@ -124,14 +124,14 @@ const Add = () => {
                                 <input id="gridPassword" type="text" name="password" value={formData.password} onChange={handleChange} placeholder="Нууц үг оруулна уу" className="form-input" />
                             </div>
                             <div>
-                            <label>Хүйс</label>
-                            <input id="gridMale" type="radio" name="Gender" value="Эрэгтэй" onChange={handleChange} className="form-radio mr-2"  />
-                            <span className="text-dark mr-4">Эрэгтэй</span>
-                            <input id="gridFemale" type="radio" name="Gender" value="Эмэгтэй" onChange={handleChange} className="form-radio mr-2 ml-4 " />
-                            <span className="text-dark">Эмэгтэй</span>
+                                <label>Хүйс</label>
+                                <input id="gridMale" type="radio" name="Gender" value="Эрэгтэй" onChange={handleChange} className="form-radio mr-2" />
+                                <span className="text-dark mr-4">Эрэгтэй</span>
+                                <input id="gridFemale" type="radio" name="Gender" value="Эмэгтэй" onChange={handleChange} className="form-radio mr-2 ml-4 " />
+                                <span className="text-dark">Эмэгтэй</span>
+                            </div>
                         </div>
-                        </div>
-                        
+
                         <button type="submit" className="btn btn-primary !mt-6">
                             Бүртгэх
                         </button>

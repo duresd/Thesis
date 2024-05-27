@@ -128,7 +128,7 @@ const AccountSetting = () => {
                         </li>
                         <li className="inline-block">
                             <button
-                                onClick={() => toggleTabs('payment-details')}
+                                onClick={() => toggleTabs('questions')}
                                 className={`flex gap-2 border-b border-transparent p-4 hover:border-primary hover:text-primary ${tabs === 'payment-details' ? '!border-primary text-primary' : ''}`}
                             >
                                 <IconChecks />
@@ -172,6 +172,52 @@ const AccountSetting = () => {
                                     <div>
                                         <label htmlFor="EmergeNum">Яаралтай үед холбоо барих хүний утас</label>
                                         <input id="EmergeNum" type="text" className="form-input" value={emergencyContactNumber} onChange={(e) => setEmergencyContactNumber(e.target.value)} />
+                                    </div>
+                                    <div className="mt-3 sm:col-span-2">
+                                        <button type="submit" className="btn btn-primary">
+                                            Хадгалах
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                ) : (
+                    ''
+                )}
+                {tabs === 'questions' ? (
+                    <div>
+                        <form className="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-black " onSubmit={handleSubmit}>
+                            <h6 className="mb-5 text-lg font-bold">Асуултууд</h6>
+                            <div className="flex flex-col sm:flex-row">
+
+                                <div className="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2">
+                                    <div>
+                                        <label htmlFor="Patient_Name">Овог нэр</label>
+                                        <input id="Patient_Name" className="form-input" type="text" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="Regis_Num">Регистрийн дугаар</label>
+                                        <input id="Regis_Num" type="text" className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="Gender">Хүйс</label>
+                                        <select id="Gender" className="form-select" name="Gender" >
+                                            <option value="Male">Эрэгтэй</option>
+                                            <option value="Female">Эмэгтэй</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="PhoneNumber">Утасны дугаар</label>
+                                        <input id="PhoneNumber" type="text" className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="EmergeName">Яаралтай үед холбоо барих хүний нэр</label>
+                                        <input id="EmergeName" type="text" className="form-input" />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="EmergeNum">Яаралтай үед холбоо барих хүний утас</label>
+                                        <input id="EmergeNum" type="text" className="form-input" />
                                     </div>
                                     <div className="mt-3 sm:col-span-2">
                                         <button type="submit" className="btn btn-primary">

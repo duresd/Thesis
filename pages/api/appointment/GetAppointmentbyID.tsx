@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 Status: {
                     select: {
+                        Status_Id: true,
                         Status_Name: true,
                     },
                 },

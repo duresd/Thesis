@@ -125,6 +125,8 @@ const Calendar: React.FC = () => {
                         }}
                         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                         initialView="dayGridMonth"
+                        dayMaxEvents={true}
+                        droppable={true}
                         events={events}
                         eventDidMount={(info) => {
                             const status = info.event.extendedProps.status as string;

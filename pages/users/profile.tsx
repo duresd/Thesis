@@ -52,7 +52,6 @@ const Profile = () => {
     const [emergencyContactNumber, setEmergencyContactNumber] = useState<string>('');
     const [isFilled, setIsFilled] = useState<boolean>(false); // Initialize as boolean
     const [appointments, setAppointments] = useState<Appointment[]>([]);
-
     useEffect(() => {
         dispatch(setPageTitle('Өвчтөнүүд'));
         if (patientId) {

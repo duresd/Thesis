@@ -23,7 +23,7 @@ const Add = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        
+
         try {
             const response = await fetch('/api/patient/CreatePatient', {
                 method: 'POST',
@@ -62,16 +62,16 @@ const Add = () => {
         const popupForm = document.getElementById('popupForm');
         const moreButton = document.getElementById('moreButton');
         const closePopupButton = document.getElementById('closePopup');
-    
+
         if (moreButton && popupForm && closePopupButton) {
             const showPopupForm = () => {
                 popupForm.classList.remove('hidden');
             };
-    
+
             const hidePopupForm = () => {
                 popupForm.classList.add('hidden');
             };
-    
+
             moreButton.addEventListener('click', showPopupForm);
             closePopupButton.addEventListener('click', hidePopupForm);
         }
@@ -83,53 +83,53 @@ const Add = () => {
                     <IconArrowBackward></IconArrowBackward>
                 </button>
             </Link>
-        <div className="panel" id="forms_grid">
-            <div className="mb-5 flex items-center justify-between">
-                <h5 className="text-lg font-semibold dark:text-white-light">Өвчтөний хувийн мэдээлэл</h5>
-                <button type="button" id="moreButton" className="btn btn-primary !mt-6 ">Эрүүл мэндийн асуулга</button>
-            </div>
-            <div className="mb-5">
-                <form className="space-y-5" onSubmit={handleSubmit} >
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="gridName">Овог, нэр</label>
-                            <input id="gridName" type="text" placeholder="Овог, нэр оруулна уу" className="form-input" value={name} onChange={(e) => setName(e.target.value)}/>
+            <div className="panel" id="forms_grid">
+                <div className="mb-5 flex items-center justify-between">
+                    <h5 className="text-lg font-semibold dark:text-white-light">Өвчтөний хувийн мэдээлэл</h5>
+                    <button type="button" id="moreButton" className="btn btn-primary !mt-6 ">Эрүүл мэндийн асуулга</button>
+                </div>
+                <div className="mb-5">
+                    <form className="space-y-5" onSubmit={handleSubmit} >
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label htmlFor="gridName">Овог, нэр</label>
+                                <input id="gridName" type="text" placeholder="Овог, нэр оруулна уу" className="form-input" value={name} onChange={(e) => setName(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="gridRnumber">Регистрийн дугаар</label>
+                                <input id="gridRnumber" type="text" placeholder="Регистрийн дугаар оруулна уу" className="form-input" value={regNumber} onChange={(e) => setRegNumber(e.target.value)} />
+                            </div>
                         </div>
-                        <div>
-                            <label htmlFor="gridRnumber">Регистрийн дугаар</label>
-                            <input id="gridRnumber" type="text" placeholder="Регистрийн дугаар оруулна уу" className="form-input" value={regNumber} onChange={(e) => setRegNumber(e.target.value)}/>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label htmlFor="gridPnumber">Утасны дугаар</label>
+                                <input id="gridPnumber" type="text" placeholder="Утасны дугаар оруулна уу" className="form-input" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                            </div>
+                            <div >
+                                <label htmlFor="gridGender">Хүйс</label>
+                                <input id="gridMale" type="radio" name="gender" value="Эрэгтэй" className="form-radio mr-2" onChange={(e) => setGender(e.target.value)} defaultChecked />
+                                <span className="text-dark mr-4">Эрэгтэй</span>
+                                <input id="gridFemale" type="radio" name="gender" value="Эмэгтэй" className="form-radio mr-2 ml-4" onChange={(e) => setGender(e.target.value)} />
+                                <span className="text-dark">Эмэгтэй</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="gridPnumber">Утасны дугаар</label>
-                            <input id="gridPnumber" type="text" placeholder="Утасны дугаар оруулна уу"  className="form-input" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label htmlFor="gridRName">Шаардлагатай үед холбоо барих хүний нэр</label>
+                                <input id="gridRName" type="text" placeholder="Овог, нэр оруулна уу" className="form-input" value={emergencyName} onChange={(e) => setEmergencyName(e.target.value)} />
+                            </div>
+                            <div>
+                                <label htmlFor="gridRPnumber">Шаардлагатай үед холбоо барих хүний утас</label>
+                                <input id="gridRPnumber" type="text" placeholder="Утасны дугаар оруулна уу" className="form-input" value={emergencyPhoneNumber} onChange={(e) => setEmergencyPhoneNumber(e.target.value)} />
+                            </div>
                         </div>
-                        <div >
-                        <label htmlFor="gridGender">Хүйс</label>
-                        <input id="gridMale" type="radio" name="gender" value="Эрэгтэй" className="form-radio mr-2"  onChange={(e) => setGender(e.target.value)}defaultChecked />
-                        <span className="text-dark mr-4">Эрэгтэй</span>
-                        <input id="gridFemale" type="radio" name="gender" value="Эмэгтэй" className="form-radio mr-2 ml-4"  onChange={(e) => setGender(e.target.value)}/>
-                        <span className="text-dark">Эмэгтэй</span>
-                    </div>
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <label htmlFor="gridRName">Шаардлагатай үед холбоо барих хүний нэр</label>
-                            <input id="gridRName" type="text" placeholder="Овог, нэр оруулна уу" className="form-input" value={emergencyName} onChange={(e) => setEmergencyName(e.target.value)}/>
-                        </div>
-                        <div>
-                            <label htmlFor="gridRPnumber">Шаардлагатай үед холбоо барих хүний утас</label>
-                            <input id="gridRPnumber" type="text" placeholder="Утасны дугаар оруулна уу" className="form-input" value={emergencyPhoneNumber} onChange={(e) => setEmergencyPhoneNumber(e.target.value)}/>
-                        </div>
-                    </div>
-                    
-                    <button type="submit"  className="btn btn-primary !mt-6">
-                        Бүртгэх
-                    </button>
-                </form>
-            </div>
-            {/* <div id="popupForm" className="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+
+                        <button type="submit" className="btn btn-primary !mt-6">
+                            Бүртгэх
+                        </button>
+                    </form>
+                </div>
+                {/* <div id="popupForm" className="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
                 <div className="bg-white p-4 rounded-lg">
                     <h2 className="text-base font-semibold mb-2">Өвтөний эрүүл мэндийн богино асуулга</h2>
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -215,7 +215,7 @@ const Add = () => {
                     <button id="closePopup" className="btn btn-primary">Хадгалах</button>
                 </div>
             </div> */}
-        </div>
+            </div>
         </>
     );
 };
