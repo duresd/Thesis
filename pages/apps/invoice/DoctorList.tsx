@@ -2,15 +2,14 @@ import Link from 'next/link';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useState, useEffect } from 'react';
 import sortBy from 'lodash/sortBy';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../../store';
+import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../../store/themeConfigSlice';
 import IconTrashLines from '@/components/Icon/IconTrashLines';
 import IconPlus from '@/components/Icon/IconPlus';
 import IconEdit from '@/components/Icon/IconEdit';
 import IconEye from '@/components/Icon/IconEye';
 import { useRouter } from 'next/router';
-
+import Swal from 'sweetalert2';
 
 interface Doctor {
     Doctor_id: string;
@@ -22,7 +21,6 @@ interface Doctor {
     Doctor_Pnum: string;
     Gender: string;
     Role: string;
-
 }
 
 const List = () => {
@@ -33,19 +31,27 @@ const List = () => {
         dispatch(setPageTitle('Эмч, мэргэжилтэн'));
     });
 
-
-    const [doctor, setDoctors] = useState<Doctor[]>([]);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
+    const [search, setSearch] = useState('');
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+        columnAccessor: 'Doctor_Name',
+        direction: 'asc',
+    });
+    const [selectedRecords, setSelectedRecords] = useState<Doctor[]>([]);
+    const PAGE_SIZES = [10, 20, 30, 50, 100];
+    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('/api/doctor/GetDoctorList');
-
                 if (!response.ok) {
                     throw new Error('Failed to fetch doctor data');
                 }
                 const data = await response.json();
-                setRecords(data);
+                setDoctors(data);
             } catch (error) {
                 console.error(error);
             }
@@ -53,71 +59,20 @@ const List = () => {
         fetchData();
     }, []);
 
-    const [page, setPage] = useState(1);
-    const PAGE_SIZES = [10, 20, 30, 50, 100];
-    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState(sortBy(doctor, 'lists'));
-    const [records, setRecords] = useState(initialRecords);
-    const [selectedRecords, setSelectedRecords] = useState<any>([]);
-
-    const [search, setSearch] = useState('');
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-        columnAccessor: 'firstName',
-        direction: 'asc',
-    });
+    useEffect(() => {
+        const filtered = doctors.filter((doctor) =>
+            doctor.Doctor_Name.toLowerCase().includes(search.toLowerCase()) ||
+            doctor.Doctor_Pnum.toLowerCase().includes(search.toLowerCase()) ||
+            doctor.Gender.toLowerCase().includes(search.toLowerCase()) ||
+            doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase())
+        );
+        setFilteredDoctors(filtered);
+    }, [doctors, search]);
 
     useEffect(() => {
-        setPage(1);
-    }, [pageSize]);
-
-    useEffect(() => {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize;
-        setRecords([...initialRecords.slice(from, to)]);
-    }, [page, pageSize, initialRecords]);
-
-    useEffect(() => {
-        setInitialRecords(() => {
-            return doctor.filter((doctor) => {
-                return (
-                    doctor.Doctor_Name.toLowerCase().includes(search.toLowerCase()) ||
-                    doctor.Doctor_Pnum.toLowerCase().includes(search.toLowerCase()) ||
-                    doctor.Gender.toLowerCase().includes(search.toLowerCase()) ||
-                    doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase())
-                );
-            });
-        });
-    }, [search]);
-
-    useEffect(() => {
-        const data2 = sortBy(initialRecords, sortStatus.columnAccessor);
-        setRecords(sortStatus.direction === 'desc' ? data2.reverse() : data2);
-        setPage(1);
-    }, [sortStatus]);
-
-    const deleteRow = (id: any = null) => {
-        if (window.confirm('Are you sure want to delete selected row ?')) {
-            if (id) {
-                setRecords(doctor.filter((doctor) => doctor.Doctor_id !== id));
-                setInitialRecords(doctor.filter((doctor) => doctor.Doctor_id !== id));
-                setDoctors(doctor.filter((doctor) => doctor.Doctor_id !== id));
-                setSelectedRecords([]);
-                setSearch('');
-            } else {
-                let selectedRows = selectedRecords || [];
-                const ids = selectedRows.map((d: any) => {
-                    return d.id;
-                });
-                const result = doctor.filter((d) => !ids.includes(d.Doctor_id as never));
-                setRecords(result);
-                setInitialRecords(result);
-                setDoctors(result);
-                setSelectedRecords([]);
-                setSearch('');
-                setPage(1);
-            }
-        }
-    };
+        const sortedDoctors = sortBy(filteredDoctors, sortStatus.columnAccessor);
+        setFilteredDoctors(sortStatus.direction === 'asc' ? sortedDoctors : sortedDoctors.reverse());
+    }, [sortStatus, filteredDoctors]);
 
     const handleEditPatient = (Doctor_id: string) => {
         router.push(`/users/?id=${Doctor_id}`);
@@ -127,12 +82,55 @@ const List = () => {
         router.push(`/users/doctorProfile?id=${Doctor_id}`);
     };
 
+    const deleteRow = async (id: string | null = null) => {
+        if (window.confirm('Are you sure you want to delete the selected row(s)?')) {
+            if (id) {
+                await handleDeleteDoctor(id);
+            } else {
+                for (const doctor of selectedRecords) {
+                    await handleDeleteDoctor(doctor.Doctor_id);
+                }
+            }
+        }
+    };
+
+    const handleDeleteDoctor = async (id: string) => {
+        try {
+            const response = await fetch(`/api/doctor/DeleteDoctor?id=${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                // Refresh doctors list or remove deleted doctor from the list
+                showMessage('Эмч амжилттай устгагдлаа');
+            } else {
+                // Handle error
+            }
+        } catch (error) {
+            console.error('Error deleting doctor:', error);
+        }
+    };
+
+    const showMessage = (msg = '', type = 'success') => {
+        const toast: any = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            customClass: { container: 'toast' },
+        });
+        toast.fire({
+            icon: type,
+            title: msg,
+            padding: '10px 20px',
+        });
+    };
+
     return (
         <div className="panel border-white-light px-0 dark:border-[#1b2e4b]">
             <div className="invoice-table">
                 <div className="mb-4.5 flex flex-col gap-5 px-5 md:flex-row md:items-center">
                     <div className="flex items-center gap-2">
-                        <button type="button" className="btn btn-danger gap-2" onClick={() => deleteRow()}>
+                        <button type="button" className="btn btn-danger gap-2" onClick={() => deleteRow(null)}>
                             <IconTrashLines />
                             Устгах
                         </button>
@@ -142,18 +140,24 @@ const List = () => {
                         </Link>
                     </div>
                     <div className="ltr:ml-auto rtl:mr-auto">
-                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                        <input
+                            type="text"
+                            className="form-input w-auto"
+                            placeholder="Search..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
                     </div>
                 </div>
 
                 <div className="datatables pagination-padding">
                     <DataTable
                         className="table-hover whitespace-nowrap"
-                        records={records}
+                        records={filteredDoctors}
                         columns={[
                             {
-                                accessor: 'name',
-                                title: 'Овог,нэр',
+                                accessor: 'Doctor_Name',
+                                title: 'Овог, нэр',
                                 sortable: true,
                                 render: ({ Doctor_Name }) => (
                                     <div className="flex items-center font-semibold">
@@ -161,17 +165,11 @@ const List = () => {
                                     </div>
                                 ),
                             },
-                            // {
-                            //     accessor: 'email',
-                            //     title:'И-мэйл',
-                            //     sortable: true,
-                            // },
                             {
-                                accessor: 'profession',
-                                title: 'Мэргэшил',
+                                accessor: 'Profession.Profession_Name',
+                                title: 'Мэргэшлийн нэр',
                                 sortable: true,
                                 titleClassName: 'text-left',
-                                render: ({ Profession }) => <div className="text-left font-semibold">{`${Profession.Profession_Name}`}</div>,
                             },
                             {
                                 accessor: 'Doctor_Pnum',
@@ -190,13 +188,25 @@ const List = () => {
                                 textAlignment: 'center',
                                 render: ({ Doctor_id }) => (
                                     <div className="mx-auto flex w-max items-center gap-4">
-                                        <Link href="/users/doctorProfile" className="flex hover:text-primary" onClick={() => handleViewPatient(Doctor_id)}>
+                                        <Link
+                                            href="/users/doctorProfile"
+                                            className="flex hover:text-primary"
+                                            onClick={() => handleViewPatient(Doctor_id)}
+                                        >
                                             <IconEye />
                                         </Link>
-                                        <Link href="/users/user-account-settings" className="flex hover:text-info" onClick={() => handleEditPatient(Doctor_id)}>
+                                        <Link
+                                            href="/users/user-account-settings"
+                                            className="flex hover:text-info"
+                                            onClick={() => handleEditPatient(Doctor_id)}
+                                        >
                                             <IconEdit className="w-4.5 h-4.5" />
                                         </Link>
-                                        <button type="button" className="flex hover:text-danger" onClick={(e) => deleteRow(Doctor_id)}>
+                                        <button
+                                            type="button"
+                                            className="flex hover:text-danger"
+                                            onClick={() => handleDeleteDoctor(Doctor_id)}
+                                        >
                                             <IconTrashLines />
                                         </button>
                                     </div>
@@ -204,7 +214,7 @@ const List = () => {
                             },
                         ]}
                         highlightOnHover
-                        totalRecords={initialRecords.length}
+                        totalRecords={filteredDoctors.length}
                         recordsPerPage={pageSize}
                         page={page}
                         onPageChange={(p) => setPage(p)}
@@ -223,3 +233,4 @@ const List = () => {
 };
 
 export default List;
+

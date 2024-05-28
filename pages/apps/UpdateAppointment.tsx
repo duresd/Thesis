@@ -7,6 +7,7 @@ import IconArrowBackward from '@/components/Icon/IconArrowBackward';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { FormEvent, ChangeEvent } from 'react';
+import dayjs from "dayjs";
 
 interface Appointment {
     Appointment_Id: number;
@@ -47,6 +48,16 @@ interface Status {
     Status_Name: string;
 }
 
+interface FormData {
+    startDate?: string,
+    endDate?: string,
+    doctorId: string
+    patientName: string
+    categoryId: string
+    statusId: string
+    description: string
+}
+
 const UpdateAppointment = () => {
     const dispatch = useDispatch();
     const router = useRouter();
@@ -55,11 +66,9 @@ const UpdateAppointment = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [appointment, setAppointment] = useState<Appointment | null>(null);
-    const [formData, setFormData] = useState({
-        startDate: '',
-        endDate: '',
+    const [formData, setFormData] = useState<FormData>({
         doctorId: '',
-        patientId: '',
+        patientName: '',
         categoryId: '',
         statusId: '',
         description: '',
@@ -92,7 +101,7 @@ const UpdateAppointment = () => {
                 const response = await axios.get('/api/status/GetStatus');
                 setStatuses(response.data);
             } catch (error) {
-                console.error('Error fetching statuses:', error);
+                console.error('Error fetching statuses\:', error);
             }
         };
         fetchStatuses();
@@ -108,10 +117,10 @@ const UpdateAppointment = () => {
             const data = await response.json();
             setAppointment(data);
             setFormData({
-                startDate: new Date(data.Startdate).toISOString().slice(0, 16),
-                endDate: new Date(data.Enddate).toISOString().slice(0, 16),
+                startDate: dayjs(data.Startdate).format("YYYY-MM-DDTHH:mm"),
+                endDate: dayjs(data.Enddate).format("YYYY-MM-DDTHH:mm"),
                 doctorId: data.Doctor.Doctor_id,
-                patientId: data.Patient.Patient_id,
+                patientName: data.Patient.Patient_Name,
                 categoryId: data.Category.Category_Id,
                 statusId: data.Status.Status_Id,
                 description: data.Description,
@@ -209,6 +218,8 @@ const UpdateAppointment = () => {
                                     value={formData.startDate}
                                     onChange={handleInputChange}
                                     className="form-input"
+                                    disabled
+
                                 />
                             </div>
                             <div>
@@ -220,26 +231,20 @@ const UpdateAppointment = () => {
                                     value={formData.endDate}
                                     onChange={handleInputChange}
                                     className="form-input"
+                                    disabled
                                 />
                             </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
-                                <label htmlFor="patientSelect">Өвчтөн сонгоно уу</label>
-                                <select
+                                <label htmlFor="patientSelect">Өвчтөний нэр</label>
+                                <input
                                     id="patientSelect"
                                     name="patientId"
-                                    value={formData.patientId}
-                                    onChange={handleInputChange}
-                                    className="form-select text-sm"
+                                    value={formData.patientName}
+                                    className="form-input text-sm"
                                     disabled
-                                >
-                                    {appointment && (
-                                        <option value={appointment.Patient.Patient_id}>
-                                            {appointment.Patient.Patient_Name}
-                                        </option>
-                                    )}
-                                </select>
+                                />
                             </div>
                             <div>
                                 <label htmlFor="doctorSelect">Эмч сонгоно уу</label>

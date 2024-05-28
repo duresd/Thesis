@@ -12,9 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const now = new Date();
         const oneWeekFromNow = new Date();
         oneWeekFromNow.setDate(now.getDate() + 7);
+        const status_id = '663b4c91f1ac87f9c33aad2d';
 
         const appointments = await prisma.appointment.findMany({
             where: {
+                Status_id: status_id,
                 Startdate: {
                     gte: now,
                     lte: oneWeekFromNow,
@@ -55,7 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 created_At: true,
             },
         });
-
         return res.status(200).json({ appointments });
     } catch (error) {
         console.error('Error fetching appointments:', error);

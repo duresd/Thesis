@@ -9,6 +9,7 @@ import IconPlus from '@/components/Icon/IconPlus';
 import IconEdit from '@/components/Icon/IconEdit';
 import IconEye from '@/components/Icon/IconEye';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
 
 interface Patient {
     Patient_id: string;
@@ -88,23 +89,37 @@ const List = () => {
         setRecords(sortStatus.direction === 'desc' ? sortedData.reverse() : sortedData);
     }, [sortStatus, initialRecords]);
 
-    const deleteRow = (id: string | null = null) => {
-        if (window.confirm('Are you sure want to delete selected row?')) {
-            let updatedPatients = patients;
-            if (id) {
-                updatedPatients = patients.filter((patient) => patient.Patient_id !== id);
-            } else if (selectedRecords.length > 0) {
-                const idsToDelete = selectedRecords.map((record) => record.Patient_id);
-                updatedPatients = patients.filter((patient) => !idsToDelete.includes(patient.Patient_id));
+    const handleDeleteDoctor = async (id: string) => {
+        try {
+            const response = await fetch(`/api/patient/DeletePatient?id=${id}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                // Refresh doctors list or remove deleted doctor from the list
+                showMessage('Өвчтөн амжилттай устгагдлаа');
+            } else {
+                // Handle error
             }
-            setPatients(updatedPatients);
-            setInitialRecords(updatedPatients);
-            setRecords(updatedPatients.slice(0, pageSize));
-            setSelectedRecords([]);
-            setSearch('');
-            setPage(1);
+        } catch (error) {
+            console.error('Error deleting doctor:', error);
         }
     };
+
+    const showMessage = (msg = '', type = 'success') => {
+        const toast: any = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            customClass: { container: 'toast' },
+        });
+        toast.fire({
+            icon: type,
+            title: msg,
+            padding: '10px 20px',
+        });
+    };
+
 
     const handleEditPatient = (patientId: string) => {
         router.push(`/users/user-account-settings?id=${patientId}`);
@@ -119,7 +134,7 @@ const List = () => {
             <div className="invoice-table">
                 <div className="mb-4.5 flex flex-col gap-5 px-5 md:flex-row md:items-center">
                     <div className="flex items-center gap-2">
-                        <button type="button" className="btn btn-danger gap-2" onClick={() => deleteRow()}>
+                        <button type="button" className="btn btn-danger gap-2" >
                             <IconTrashLines />
                             Устгах
                         </button>
@@ -170,7 +185,7 @@ const List = () => {
                                         <Link href="#" className="flex hover:text-primary" onClick={() => handleViewPatient(Patient_id)}>
                                             <IconEye />
                                         </Link>
-                                        <button type="button" className="flex hover:text-danger" onClick={() => deleteRow(Patient_id)}>
+                                        <button type="button" className="flex hover:text-danger" onClick={() => handleDeleteDoctor(Patient_id)}>
                                             <IconTrashLines />
                                         </button>
                                     </div>

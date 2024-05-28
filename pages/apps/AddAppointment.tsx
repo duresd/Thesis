@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { setPageTitle } from '../../store/themeConfigSlice';
@@ -100,31 +100,44 @@ const AddAppointment = () => {
         }
     };
 
-    const validateTimeRange = (value: string) => {
-        const date = new Date(value);
-        const hours = date.getHours();
-        return hours >= 10 && hours < 20;
+    const [isTimeValid, setIsTimeValid] = useState(true);
+
+    const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const isValid = validateTime(value);
+        setIsTimeValid(isValid);
+
+        if (isValid) {
+            const updatedFormData = {
+                ...formData,
+                [name]: value
+            };
+
+            if (name === 'Startdate') {
+                updatedFormData.Enddate = calculateEndDate(value);
+            }
+
+            setFormData(updatedFormData);
+        }
     };
 
-    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("sdfds");
-        const { name, value } = e.target;
-        const selectedTime = new Date(value).getTime(); // Convert selected time to milliseconds
+    const validateTime = (dateTime: string): boolean => {
+        const date = new Date(dateTime);
+        const hours = date.getHours();
+        return hours >= 10 && hours <= 20; // Valid between 10 AM and 8 PM
+    };
 
-        const startTime = new Date(value);
-        startTime.setHours(10, 0, 0, 0); // Set the start time to 10 AM
-        const endTime = new Date(startTime.getTime() + 10 * 60 * 60 * 1000); // Set the end time to 8 PM
+    const calculateEndDate = (startDate: string): string => {
+        const start = new Date(startDate);
+        start.setHours(start.getHours() + 1); // Add one hour
+        const year = start.getFullYear();
+        const month = String(start.getMonth() + 1).padStart(2, '0');
+        const day = String(start.getDate()).padStart(2, '0');
+        const hours = String(start.getHours()).padStart(2, '0');
+        const minutes = String(start.getMinutes()).padStart(2, '0');
 
-        if (selectedTime >= startTime.getTime() && selectedTime <= endTime.getTime()) {
-            const newEndDate = new Date(selectedTime + 60 * 60 * 1000); // Add one hour to the selected time
-            setFormData({
-                ...formData,
-                [name]: value,
-                Enddate: newEndDate.toISOString().slice(0, 16),
-            });
-        } else {
-            alert('Please select a time between 10 AM and 8 PM.');
-        }
+        // Return formatted string suitable for datetime-local input
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
     };
 
 
@@ -185,11 +198,14 @@ const AddAppointment = () => {
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label htmlFor="startDatetimeInput">Эмчилгээ эхлэх огноо</label>
-                                    <input type="datetime-local" id="startDatetimeInput" name="Startdate" value={formData.Startdate} onChange={handleTimeChange} className="form-input" />
+                                    <input type="datetime-local" id="startDatetimeInput" name="Startdate" value={formData.Startdate} onChange={handleTimeChange} className={`form-input ${isTimeValid ? '' : 'border-red-500'}`} />
+                                    {!isTimeValid && (
+                                        <p className="text-red-500">Эхлэх цаг нь 10-аас 20-н цагийн хооронд байх ёстой.</p>
+                                    )}
                                 </div>
                                 <div>
                                     <label htmlFor="endDatetimeInput">Эмчилгээ дуусах огноо</label>
-                                    <input type="datetime-local" id="endDatetimeInput" name="Enddate" value={formData.Enddate} onChange={handleTimeChange} className="form-input" readOnly />
+                                    <input type="datetime-local" id="endDatetimeInput" name="Enddate" value={formData.Enddate} className="form-input" readOnly />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

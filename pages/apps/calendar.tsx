@@ -7,6 +7,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import Link from 'next/link';
 import IconPlus from '@/components/Icon/IconPlus';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 
 interface Appointment {
     Appointment_Id: number;
@@ -67,11 +68,11 @@ const Calendar: React.FC = () => {
             case 'Хүлээгдэж буй':
                 return '#0d6efd'; // Primary color
             case 'Цуцалсан':
-                return '#7939AC '; // Danger color
+                return 'gray'; // Danger color
             case 'Дууссан':
                 return '#198754'; // Custom success color
             default:
-                return 'gray'; // Default color
+                return 'gray #7939AC'; // Default color
         }
     };
 
@@ -80,15 +81,23 @@ const Calendar: React.FC = () => {
         // Handle success
     };
 
-    const events: EventInput[] = appointments.map((appointment) => ({
-        id: String(appointment.Appointment_Id),
-        title: appointment.Patient.Patient_Name,
-        start: appointment.Startdate,
-        end: appointment.Enddate,
-        extendedProps: {
-            status: appointment.Status.Status_Name,
-        },
-    }));
+
+
+    const events: EventInput[] = appointments.map((appointment) => {
+        const startTime = dayjs(appointment.Startdate).format("HH:mm");
+        const endTime = dayjs(appointment.Enddate).format("HH:mm");
+
+        return {
+            id: String(appointment.Appointment_Id),
+            title: `${startTime} to ${endTime} - ${appointment.Doctor.Doctor_Name} - ${appointment.Patient.Patient_Name}`,
+            start: appointment.Startdate,
+            end: appointment.Enddate,
+            extendedProps: {
+                status: appointment.Status.Status_Name,
+            },
+        };
+
+    });
 
     return (
         <div>
@@ -106,7 +115,7 @@ const Calendar: React.FC = () => {
                                 <div>Дууссан</div>
                             </div>
                             <div className="flex items-center">
-                                <div className="h-2.5 w-2.5 rounded-sm bg-secondary ltr:mr-2 rtl:ml-2"></div>
+                                <div className="h-2.5 w-2.5 rounded-sm bg-gray-600 ltr:mr-2 rtl:ml-2"></div>
                                 <div>Цуцалсан</div>
                             </div>
                         </div>

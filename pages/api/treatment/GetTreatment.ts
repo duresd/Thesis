@@ -9,7 +9,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const Treatment = await prisma.treatment.findMany();
+        const Treatment = await prisma.treatment.findMany({
+            include: {
+                Category: {
+                    select: {
+                        Category_Id: true,
+                        Category_Name: true,
+                    },
+                },
+            },
+        });
 
         res.setHeader('Cache-Control', 'no-cache');
 

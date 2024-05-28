@@ -107,7 +107,7 @@ const Basic = () => {
                 <h5 className="text-lg font-semibold dark:text-white-light">Эмчилгээний ангилал</h5>
             </div>
             <div className="mb-5 flex space-x-5">
-                <form className="space-y-5 w-1/2">
+                {/* <form className="space-y-5 w-1/2">
                     <div>
                         <ul id="categoryList" className="list-disc pl-5 max-h-64 overflow-y-auto">
                             {category.map((cat) => (
@@ -126,8 +126,38 @@ const Basic = () => {
                     <button type="button" className="btn btn-danger !mt-6" onClick={deleteSelectedCategories}>
                         Устгах
                     </button>
+                </form> */}
+                <form className="space-y-5 w-2/3">
+                    <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+                        <table className="table-auto">
+                            <thead>
+                                <tr>
+                                    <th className="px-4 py-2 font-bold " >Эмчилгээний ангилалын нэр</th>
+                                    <th className="px-4 py-2 font-bold">Сонгох</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {category.map((cat) => (
+                                    <tr key={cat.Category_Id} className="hover:bg-gray-200">
+                                        <td className="border px-4 py-2">{cat.Category_Name}</td>
+                                        <td className="border px-4 py-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCategories.includes(cat.Category_Id)}
+                                                onChange={() => handleCheckboxChange(cat.Category_Id)}
+                                                className="mr-2"
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" className="btn btn-danger !mt-6" onClick={deleteSelectedCategories}>
+                        Устгах
+                    </button>
                 </form>
-                <form className="space-y-5 w-1/2" onSubmit={handleSubmit}>
+                <form className="space-y-5 w-1/3" onSubmit={handleSubmit}>
                     <div>
                         <label htmlFor="groupLname2">Ангилалын нэр</label>
                         <input
