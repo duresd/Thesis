@@ -39,7 +39,8 @@ const LoginBoxed = () => {
                 },
                 body: JSON.stringify({ Employee_Pnum, password }),
             });
-
+            console.log('response=====================');
+            console.log(response);
             if (response.ok) {
                 // Redirect to dashboard or any other page on successful login
                 router.push('/');
@@ -48,6 +49,9 @@ const LoginBoxed = () => {
                 if (response.status === 401) {
                     // Display an alert indicating wrong email or password
                     alert('Incorrect email or password. Please try again.');
+                    // if(response.message){
+                    //     toast.success(response.message);
+                    // }
                 } else {
                     // For other errors, log the error message
                     const errorData = await response.json();
@@ -55,16 +59,17 @@ const LoginBoxed = () => {
                     // Handle login error, show error message to user
                     // For example, you can display a generic error message
                     alert('Failed to login. Please try again later.');
+                    // toast.error('Алдаа гарлаа');
                 }
             }
         } catch (error) {
             console.error('Login error:', error);
             // Handle network error
             // Display a generic error message to the user
+            // toast.error('Алдаа гарлаа');
             alert('Failed to login. Please try again later.');
         }
     };
-
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -98,7 +103,9 @@ const LoginBoxed = () => {
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 px-6 py-20 backdrop-blur-lg dark:bg-black/50 lg:min-h-[758px]">
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="mb-10">
-                                <h1 className="text-2xl font-extrabold uppercase !leading-snug text-primary md:text-1xl" style={{ fontFamily: 'Poppins, sans-serif' }}>A Time Management System Of Dental Clinic</h1>
+                                <h1 className="md:text-1xl text-2xl font-extrabold uppercase !leading-snug text-primary" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                    A Time Management System Of Dental Clinic
+                                </h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Шүдний эмнэлгийн цаг захиалгын систем</p>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
