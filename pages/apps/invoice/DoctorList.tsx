@@ -30,18 +30,20 @@ const List = () => {
     useEffect(() => {
         dispatch(setPageTitle('Эмч, мэргэжилтэн'));
     });
-
-    const [doctors, setDoctors] = useState<Doctor[]>([]);
-    const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
-    const [search, setSearch] = useState('');
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-        columnAccessor: 'Doctor_Name',
-        direction: 'asc',
-    });
-    const [selectedRecords, setSelectedRecords] = useState<Doctor[]>([]);
+    const [patients, setPatients] = useState<Doctor[]>([]);
+    const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [page, setPage] = useState(1);
+    const [initialRecords, setInitialRecords] = useState<Doctor[]>([]);
+    const [records, setRecords] = useState<Doctor[]>([]);
+    const [selectedRecords, setSelectedRecords] = useState<Doctor[]>([]);
+    const [search, setSearch] = useState('');
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+        columnAccessor: 'Patient_Name',
+        direction: 'asc',
+    });
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,19 +62,33 @@ const List = () => {
     }, []);
 
     useEffect(() => {
-        const filtered = doctors.filter((doctor) =>
-            doctor.Doctor_Name.toLowerCase().includes(search.toLowerCase()) ||
-            doctor.Doctor_Pnum.toLowerCase().includes(search.toLowerCase()) ||
-            doctor.Gender.toLowerCase().includes(search.toLowerCase()) ||
-            doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredDoctors(filtered);
-    }, [doctors, search]);
+        setPage(1);
+    }, [pageSize]); ''
+
 
     useEffect(() => {
-        const sortedDoctors = sortBy(filteredDoctors, sortStatus.columnAccessor);
-        setFilteredDoctors(sortStatus.direction === 'asc' ? sortedDoctors : sortedDoctors.reverse());
-    }, [sortStatus, filteredDoctors]);
+        const filteredDoctor = doctors.filter((doctor) => {
+            return (
+                doctor.Doctor_Name.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.Doctor_Rnum.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.Doctor_Pnum.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.Gender.toLowerCase().includes(search.toLowerCase()) ||
+                doctor.Profession.Profession_Name.toLowerCase().includes(search.toLowerCase())
+            );
+        });
+        setInitialRecords(filteredDoctor);
+    }, [search, doctors]);
+
+    useEffect(() => {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize;
+        setRecords(initialRecords.slice(from, to));
+    }, [page, pageSize, initialRecords]);
+
+    useEffect(() => {
+        const sortedData = sortBy(initialRecords, sortStatus.columnAccessor);
+        setRecords(sortStatus.direction === 'desc' ? sortedData.reverse() : sortedData);
+    }, [sortStatus, initialRecords]);
 
     const handleEditPatient = (Doctor_id: string) => {
         router.push(`/users/?id=${Doctor_id}`);
@@ -153,7 +169,8 @@ const List = () => {
                 <div className="datatables pagination-padding">
                     <DataTable
                         className="table-hover whitespace-nowrap"
-                        records={filteredDoctors}
+                        idAccessor="Doctor_id"
+                        records={records}
                         columns={[
                             {
                                 accessor: 'Doctor_Name',
@@ -214,7 +231,7 @@ const List = () => {
                             },
                         ]}
                         highlightOnHover
-                        totalRecords={filteredDoctors.length}
+                        totalRecords={initialRecords.length}
                         recordsPerPage={pageSize}
                         page={page}
                         onPageChange={(p) => setPage(p)}

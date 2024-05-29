@@ -252,13 +252,13 @@ const Calendar = () => {
                                     </div>
                                     <div className="p-5">
                                         <form className="space-y-5">
-                                        <div>
+                                            <div>
                                                 <label htmlFor="title">Өвчтөн сонгох :</label>
                                                 <select name="category" id="category" className="form-input"  >
                                                     <optgroup label='Өвчтөний нэр'>
-                                                    <option value="1">Л.Энхтөр</option>
-                                                    <option value="1">Л.Энхтөр</option>
-                                                    <option value="1">Л.Энхтөр</option>
+                                                        <option value="1">Л.Энхтөр</option>
+                                                        <option value="1">Л.Энхтөр</option>
+                                                        <option value="1">Л.Энхтөр</option>
                                                     </optgroup>
                                                 </select>
                                                 <div className="mt-2 text-danger" id="titleErr"></div>
@@ -267,9 +267,9 @@ const Calendar = () => {
                                                 <label htmlFor="title">Эмч сонгох :</label>
                                                 <select name="category" id="category" className="form-input"  >
                                                     <optgroup label='Эмчийн  нэр'>
-                                                    <option value="1">Эмч</option>
-                                                    <option value="1">Эмч</option>
-                                                    <option value="1">Эмч</option>
+                                                        <option value="1">Эмч</option>
+                                                        <option value="1">Эмч</option>
+                                                        <option value="1">Эмч</option>
                                                     </optgroup>
                                                 </select>
                                                 <div className="mt-2 text-danger" id="titleErr"></div>
@@ -278,11 +278,11 @@ const Calendar = () => {
                                                 <label htmlFor="title">Эмчилгээний ангилал :</label>
                                                 <select name="category" id="category" className="form-input"  >
                                                     <optgroup label='Эмчилгээний Ангилал'>
-                                                    <option value="1">Үзлэг зөвлөгөө</option>
-                                                    <option value="2">Шүдний гажиг заслын эмчилгээ</option>
-                                                    <option value="3">Хүүхдийн сүүн шүдний эмчилгээ</option>
-                                                    <option value="4">Шүдний согог заслын эмчилгээ</option>
-                                                    <option value="5">Шүдний мэс заслын эмчилгээ</option>
+                                                        <option value="1">Үзлэг зөвлөгөө</option>
+                                                        <option value="2">Шүдний гажиг заслын эмчилгээ</option>
+                                                        <option value="3">Хүүхдийн сүүн шүдний эмчилгээ</option>
+                                                        <option value="4">Шүдний согог заслын эмчилгээ</option>
+                                                        <option value="5">Шүдний мэс заслын эмчилгээ</option>
                                                     </optgroup>
                                                 </select>
                                                 <div className="mt-2 text-danger" id="titleErr"></div>

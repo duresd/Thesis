@@ -84,19 +84,16 @@ const Calendar: React.FC = () => {
 
 
     const events: EventInput[] = appointments.map((appointment) => {
-        const startTime = dayjs(appointment.Startdate).format("HH:mm");
-        const endTime = dayjs(appointment.Enddate).format("HH:mm");
 
         return {
             id: String(appointment.Appointment_Id),
-            title: `${startTime} to ${endTime} - ${appointment.Doctor.Doctor_Name} - ${appointment.Patient.Patient_Name}`,
+            title: ` ${appointment.Doctor.Doctor_Name} - ${appointment.Patient.Patient_Name}`,
             start: appointment.Startdate,
             end: appointment.Enddate,
             extendedProps: {
                 status: appointment.Status.Status_Name,
             },
         };
-
     });
 
     return (

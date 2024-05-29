@@ -43,6 +43,11 @@ const Index = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [appointmentCounts, setAppointmentCounts] = useState<{ [key: string]: number }>({
+        waiting: 0,
+        cancelled: 0,
+        done: 0,
+    });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -233,11 +238,35 @@ const Index = () => {
     };
 
     //Sales By Category
-    const salesByCategory: any = {
-        series: [100, 937, 70],
+    useEffect(() => {
+        const counts: { [key: string]: number } = {
+            waiting: 0,
+            cancelled: 0,
+            done: 0,
+        };
+
+        const statusMap: { [key: string]: string } = {
+            "Хүлээгдэж буй": "waiting",
+            "Цуцалсан": "cancelled",
+            "Дууссан": "done"
+        };
+
+        appointments.forEach(appointment => {
+            const statusKey = statusMap[appointment.Status.Status_Name];
+            if (statusKey) {
+                counts[statusKey]++;
+            }
+        });
+
+        setAppointmentCounts(counts);
+    }, [appointments]);
+
+    // Sales By Category chart configuration
+    const salesByCategory = {
+        series: [appointmentCounts.waiting, appointmentCounts.cancelled, appointmentCounts.done],
         options: {
             chart: {
-                type: 'donut',
+                type: 'donut' as const,
                 height: 460,
                 fontFamily: 'Nunito, sans-serif',
             },
@@ -247,12 +276,12 @@ const Index = () => {
             stroke: {
                 show: true,
                 width: 25,
-                colors: isDark ? '#0e1726' : '#fff',
+                colors: [isDark ? '#0e1726' : '#fff'],
             },
-            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f'] : ['#0638b8', '#0e8f15', '#e7515a'],
+            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a'] : ['#0638b8', '#e7515a', '#0e8f15'],
             legend: {
-                position: 'bottom',
-                horizontalAlign: 'center',
+                position: 'bottom' as const,
+                horizontalAlign: 'center' as const,
                 fontSize: '14px',
                 markers: {
                     width: 10,
@@ -285,9 +314,9 @@ const Index = () => {
                             },
                             total: {
                                 show: true,
-                                label: 'Нийт',
+                                label: 'Total',
                                 color: '#888ea8',
-                                fontSize: '29px',
+                                fontSize: '20px',
                                 formatter: (w: any) => {
                                     return w.globals.seriesTotals.reduce(function (a: any, b: any) {
                                         return a + b;
@@ -298,7 +327,7 @@ const Index = () => {
                     },
                 },
             },
-            labels: ['Хүлээгдэж буй', 'Дууссан', 'Цуцалсан'],
+            labels: ['Хүлээгдэж буй', 'Цуцалсан', 'Дууссан'],
             states: {
                 hover: {
                     filter: {
@@ -315,6 +344,7 @@ const Index = () => {
             },
         },
     };
+
 
     const getStatusClass = (statusName: string) => {
         switch (statusName) {

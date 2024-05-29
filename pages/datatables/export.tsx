@@ -6,6 +6,7 @@ import IconMenuComponents from '@/components/Icon/Menu/IconMenuComponents';
 import IconFile from '@/components/Icon/IconFile';
 import IconPrinter from '@/components/Icon/IconPrinter';
 import { downloadExcel } from 'react-export-table-to-excel';
+import dayjs from "dayjs";
 
 interface Appointment {
     Appointment_Id: string;
@@ -34,6 +35,15 @@ interface Appointment {
 type AppointmentRecord = {
     [key: string]: any;
 };
+interface FormData {
+    startDate?: string,
+    endDate?: string,
+    doctorId: string,
+    patientName: string,
+    categoryId: string,
+    statusId: string,
+    description: string,
+}
 
 const Export = () => {
     const dispatch = useDispatch();
@@ -43,6 +53,13 @@ const Export = () => {
 
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(true);
+    const [formData, setFormData] = useState<FormData>({
+        doctorId: '',
+        patientName: '',
+        categoryId: '',
+        statusId: '',
+        description: '',
+    });
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -53,6 +70,15 @@ const Export = () => {
                 }
                 const data = await response.json();
                 setAppointments(data.appointments);
+                setFormData({
+                    startDate: dayjs(data.Startdate).format("YYYY-MM-DDTHH:mm"),
+                    endDate: dayjs(data.Enddate).format("YYYY-MM-DDTHH:mm"),
+                    doctorId: data.Doctor.Doctor_id,
+                    patientName: data.Patient.Patient_Name,
+                    categoryId: data.Category.Category_Id,
+                    statusId: data.Status.Status_Id,
+                    description: data.Description,
+                });
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching appointments:', error);
@@ -80,18 +106,17 @@ const Export = () => {
             sheet: 'Appointments',
             tablePayload: {
                 header: col,
-                body: appointments.map((appointment: Appointment) => [
-                    appointment.Appointment_Id,
-                    appointment.Startdate,
-                    appointment.Enddate,
-                    appointment.Doctor?.Doctor_Name || '',
-                    appointment.Patient?.Phone_Num || '',
-                    appointment.Category?.Category_Name || '',
-                    appointment.Employee?.Employee_Name || '',
-                    appointment.Status?.Status_Name || '',
-                    appointment.Description,
-                    appointment.created_At,
-                ]),
+                body: [
+                    [
+                        formData.doctorId || '',
+                        formData.startDate || '',
+                        formData.endDate || '',
+                        formData.patientName || '',
+                        formData.categoryId || '',
+                        formData.statusId || '',
+                        formData.description || '',
+                    ]
+                ],
             },
         });
     };
