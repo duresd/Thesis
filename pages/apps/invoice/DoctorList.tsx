@@ -111,6 +111,7 @@ const List = () => {
     };
 
     const handleDeleteDoctor = async (id: string) => {
+
         try {
             const response = await fetch(`/api/doctor/DeleteDoctor?id=${id}`, {
                 method: 'DELETE',

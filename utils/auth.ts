@@ -1,16 +1,25 @@
-import jwt from 'jsonwebtoken';
+import { SessionOptions } from 'iron-session';
 
-const SECRET_KEY = 'your-secret-key'; // Replace with a strong secret key
-
-export function generateToken(userId: string): string {
-  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
+export interface SessionData {
+    username: string;
+    isLoggedIn: boolean;
 }
 
-export function verifyToken(token: string): { userId: string } | null {
-  try {
-    return jwt.verify(token, SECRET_KEY) as { userId: string };
-  } catch (error) {
-    console.error('Token verification failed:', error);
-    return null;
-  }
+export const defaultSession: SessionData = {
+    username: '',
+    isLoggedIn: false,
+};
+
+export const sessionOptions: SessionOptions = {
+    password: 'complex_password_at_least_32_characters_long',
+    cookieName: 'sessionId',
+    cookieOptions: {
+        // secure only works in `https` environments
+        // if your localhost is not on `https`, then use: `secure: process.env.NODE_ENV === "production"`
+        secure: true,
+    },
+};
+
+export function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }

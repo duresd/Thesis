@@ -50,8 +50,9 @@ const Profile = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [emergencyContactName, setEmergencyContactName] = useState<string>('');
     const [emergencyContactNumber, setEmergencyContactNumber] = useState<string>('');
-    const [isFilled, setIsFilled] = useState<boolean>(false); // Initialize as boolean
+    const [isFilled, setIsFilled] = useState<boolean>(); // Initialize as boolean
     const [appointments, setAppointments] = useState<Appointment[]>([]);
+
     useEffect(() => {
         dispatch(setPageTitle('Өвчтөнүүд'));
         if (patientId) {
@@ -73,6 +74,7 @@ const Profile = () => {
             setName(data.Patient_Name);
             setRegistrationNumber(data.Regis_Num);
             setGender(data.Gender);
+            console.log(data)
             setPhoneNumber(data.Phone_Num);
             setEmergencyContactName(data.Emerg_Name);
             setEmergencyContactNumber(data.Emerg_PNum);
@@ -94,11 +96,15 @@ const Profile = () => {
         try {
             setLoading(true);
             const response = await fetch(`/api/patienthistory/GetPatienHistorybyID?id=${patientId}`);
-            if (!response.ok) {
+            if (response.status === 404) {
+                setPatientHistory([]);
+                // No records found, set patient history to empty array
+            } else if (!response.ok) {
                 throw new Error('Failed to fetch patient details');
+            } else {
+                const data = await response.json();
+                setPatientHistory(data);
             }
-            const data = await response.json();
-            setPatientHistory(data);
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -137,9 +143,7 @@ const Profile = () => {
                     <div className="panel">
                         <div className="mb-5 flex items-center justify-between">
                             <h5 className="text-lg font-semibold dark:text-white-light">Өвчтөний мэдээлэл</h5>
-                            <Link href="/users/user-account-settings" className="btn btn-primary rounded-full p-2 ltr:ml-auto rtl:mr-auto">
-                                <IconPencilPaper />
-                            </Link>
+
                         </div>
                         <div className="mb-5">
                             <div className="flex flex-col items-center justify-center">
@@ -153,7 +157,7 @@ const Profile = () => {
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <IconCircleCheck className="shrink-0" />
-                                    {isFilled ? 'Эрүүл мэндийн асуулга бөглсөн' : 'Эрүүд мэндийн асуулга бөглөөгүй'} {/* Display isFilled as Yes or No */}
+                                    {isFilled ? 'Эрүүл мэндийн асуулга бөглөсөн' : 'Эрүүд мэндийн асуулга бөглөөгүй'} {/* Display isFilled as Yes or No */}
                                 </li>
                                 <li>
                                     <button className="flex items-center gap-2">
@@ -186,65 +190,22 @@ const Profile = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="dark:text-white-dark">
-                                        <tr>
-                                            <td>
-                                                {patienthistory.map((history) => (
-                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
-                                                        {history.Appointment.Category.Category_Name}
-                                                    </div>
-                                                ))}
-                                            </td>
-                                            <td>
-                                                {patienthistory.map((history) => (
-                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
-                                                        {history.Appointment.Treatment.Treatment_Name}
-                                                    </div>
-                                                ))}
-                                            </td>
-                                            <td className="text-center">
-                                                {patienthistory.map((history) => (
-                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
-                                                        {history.Appointment.Doctor.Doctor_Name}
-                                                    </div>
-                                                ))}
-                                            </td>
-                                            <td className="text-center">
-                                                {patienthistory.map((history) => (
-                                                    <div key={history.History_Id}> {/* Assuming each history item has a unique id */}
-                                                        {history.Appointment.Startdate}
-                                                    </div>
-                                                ))}
-                                            </td>
-                                        </tr>
+                                        {patienthistory.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={4} className="text-center">Одоогоор цаг захиалгын түүх бүртгэгдээгүй байна</td>
+                                            </tr>
+                                        ) : (
+                                            patienthistory.map(history => (
+                                                <tr key={history.History_Id}>
+                                                    <td>{history.Appointment.Category.Category_Name}</td>
+                                                    <td>{history.Appointment.Treatment.Treatment_Name}</td>
+                                                    <td className="text-center">{history.Appointment.Doctor.Doctor_Name}</td>
+                                                    <td className="text-center">{history.Appointment.Startdate}</td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className="panel">
-                        <div className="mb-10 flex items-center justify-between">
-                            <h5 className="text-lg font-semibold dark:text-white-light">Цаг захиалгын түүх</h5>
-                            <button className="btn btn-primary">Нэмэх</button>
-                        </div>
-                        <div className="group">
-                            <ul className="mb-7 list-inside list-disc space-y-2 font-semibold text-white-dark">
-                                <li>{appointments && appointments.map((appointment) => (
-                                    <div key={appointment.appointment.Appointment_Id}>
-                                        {appointment.appointment.Startdate}
-                                    </div>
-                                ))}</li>
-                            </ul>
-                            <div className="mb-4 flex items-center justify-between font-semibold">
-                                <p className="flex items-center rounded-full bg-dark px-2 py-1 text-xs font-semibold text-white-light">
-                                    <IconClock className="w-3 h-3 ltr:mr-1 rtl:ml-1" />
-                                    5 Days Left
-                                </p>
-                                <p className="text-info">Дараагийн үзлэг</p>
-                            </div>
-                            <div className="mb-5 h-2.5 overflow-hidden rounded-full bg-dark-light p-0.5 dark:bg-dark-light/10">
-                                <div className="relative h-full w-full rounded-full bg-gradient-to-r from-[#f67062] to-[#fc5296]" style={{ width: '65%' }}></div>
                             </div>
                         </div>
                     </div>

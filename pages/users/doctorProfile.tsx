@@ -5,37 +5,8 @@ import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useEffect, useState } from 'react';
 import IconPencilPaper from '@/components/Icon/IconPencilPaper';
-import IconNotes from '@/components/Icon/IconNotes';
-import IconUsers from '@/components/Icon/IconUsers';
-import IconPhone from '@/components/Icon/IconPhone';
-import IconClock from '@/components/Icon/IconClock';
 import { useRouter } from 'next/router';
-import IconCircleCheck from '@/components/Icon/IconCircleCheck';
-import IconInfoCircle from '@/components/Icon/IconInfoCircle';
-
-interface Patient_history {
-    History_Id: string,
-    Appointment_Id: string,
-    Appointment: {
-        Startdate: string,
-        Treatment: {
-            Treatment_Name: string,
-        },
-        Category: {
-            Category_Name: string,
-        },
-        Doctor: {
-            Doctor_Name: string,
-        },
-    }
-    Description: string,
-}
-interface Appointment {
-    appointment: {
-        Appointment_Id: string,
-        Startdate: string,
-    }
-}
+import dayjs from 'dayjs';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -120,7 +91,7 @@ const Profile = () => {
                         <div className="mb-5">
                             <div className="flex flex-col items-center justify-center">
                                 <img src="/assets/images/lightbox5.jpeg" alt="img" className="mb-5 h-24 w-24 rounded-full  object-cover" />
-                                <p className="text-xl font-semibold text-primary">Нэр: {name}</p>
+                                <p className="text-lg font-semibold text-primary">Овог, нэр: {name}</p>
                             </div>
                             <ul className="m-auto mt-5 flex max-w-[260px] flex-col space-y-1 font-semibold text-white-dark">
                                 <li className="flex items-center gap-1">
@@ -164,14 +135,18 @@ const Profile = () => {
                                             <th className="text-info">Эмчилгээний ангилал</th>
                                             <th className="text-info">Эмчилгээний төрөл</th>
                                             <th className="text-info">Эмчилгээ эхлэх цаг</th>
+                                            <th className="text-info">Эмчилгээ дуусах цаг</th>
                                         </tr>
                                     </thead>
                                     <tbody className="dark:text-white-dark ">
                                         <tr>
                                             <td>
                                                 {appointments.map((history) => (
-                                                    <div key={history.Appointment_Id} className="mb-4"> {/* Assuming each history item has a unique id */}
-                                                        {history.Patient.Patient_Name}
+                                                    <div key={history.Appointment_Id} className="mb-4">
+                                                        {/* Create a link element with `href` and `onClick` */}
+                                                        <Link href={`/users/user-account-settings?id=${history.Patient.Patient_id}`}>
+                                                            {history.Patient.Patient_Name}
+                                                        </Link>
                                                     </div>
                                                 ))}
                                             </td>
@@ -182,12 +157,24 @@ const Profile = () => {
                                                     </div>
                                                 ))}
                                             </td>
-                                            <td className="text-center">
+                                            <td>
+                                                {appointments.map((history) => (
+                                                    <div key={history.Appointment_Id} className="mb-4"> {/* Assuming each history item has a unique id */}
+                                                        {history.Treatment.Treatment_Name}
+                                                    </div>
+                                                ))}
                                             </td>
                                             <td className="text-center">
                                                 {appointments.map((history) => (
                                                     <div key={history.Appointment_Id} className="mb-4"> {/* Assuming each history item has a unique id */}
-                                                        {history.Startdate}
+                                                        {dayjs(history.Startdate).format('YYYY-MM-DDTHH:MM')}
+                                                    </div>
+                                                ))}
+                                            </td>
+                                            <td className="text-center">
+                                                {appointments.map((history) => (
+                                                    <div key={history.Appointment_Id} className="mb-4"> {/* Assuming each history item has a unique id */}
+                                                        {dayjs(history.Enddate).format('YYYY-MM-DDTHH:MM')}
                                                     </div>
                                                 ))}
                                             </td>

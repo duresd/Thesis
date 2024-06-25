@@ -80,13 +80,18 @@ const Add = () => {
 
     return (
         <>
-            <Link href="/apps/invoice/DoctorList">
-                <button type="button" className="btn btn-primary !mt-6 mr-2 mb-5">
-                    <IconArrowBackward />
-                </button>
-            </Link>
+            <ul className="flex space-x-2 rtl:space-x-reverse">
+                <li>
+                    <Link href="/apps/invoice/DoctorList" className="text-primary hover:underline">
+                        Эмч мэргэжилтэнүүд
+                    </Link>
+                </li>
+                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                    <span>Эмч нэмэх</span>
+                </li>
+            </ul>
 
-            <div className="panel" id="forms_grid">
+            <div className="panel mt-5" id="forms_grid">
                 <div className="mb-5 flex items-center justify-between">
                     <h5 className="text-lg font-semibold dark:text-white-light">Эмчийн хувийн мэдээлэл</h5>
                 </div>

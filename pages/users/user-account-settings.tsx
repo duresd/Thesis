@@ -25,7 +25,7 @@ const AccountSetting = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [emergencyContactName, setEmergencyContactName] = useState<string>('');
     const [emergencyContactNumber, setEmergencyContactNumber] = useState<string>('');
-
+    const [questions, setQuestions] = useState<any[]>([]);
 
     useEffect(() => {
         dispatch(setPageTitle('Өвчтөнүүд'));
@@ -38,7 +38,11 @@ const AccountSetting = () => {
     const [tabs, setTabs] = useState<string>('home');
     const toggleTabs = (name: string) => {
         setTabs(name);
+        if (name === 'questions') {
+            fetchQuestions(); // Call fetchQuestions when "questions" tab is selected
+        }
     };
+
 
     const fetchPatientDetails = async () => {
         try {
@@ -64,6 +68,20 @@ const AccountSetting = () => {
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchQuestions = async () => {
+        try {
+            const response = await fetch('/api/questions/GetQuestions');
+            if (!response.ok) {
+                throw new Error('Failed to fetch questions');
+            }
+            const data = await response.json();
+            console.log('Fetched questions:', data);
+            setQuestions(data);
+        } catch (error) {
+            console.error('Error fetching questions:', error);
         }
     };
 
@@ -101,6 +119,53 @@ const AccountSetting = () => {
             setLoading(false);
         }
     };
+
+    const handleQuestionSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            setLoading(true);
+            // First, create an array to hold all the promises for creating questionnaires
+            const createQuestionnairePromises = questions.map(async (question) => {
+                // For each question, create a questionnaire entry
+                const response = await fetch(`/api/questionnaire/CreateQuestionnaire`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Question_Id: question.Question_ID, // Use the correct property name for question ID
+                        Patient_id: patientId, // Use the patient ID from the router query
+                        Answer: question.Answer, // Pass the user's answer to the question
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to create questionnaire for question: ' + question.Question_ID);
+                }
+                return response.json(); // Return the response JSON for each questionnaire created
+            });
+
+            // Execute all the promises concurrently
+            const createdQuestionnaires = await Promise.all(createQuestionnairePromises);
+
+            // Optionally handle the created questionnaires
+            console.log('Created questionnaires:', createdQuestionnaires);
+
+            // Finally, navigate to the desired page
+            router.push('/apps/invoice/PatientList');
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An unknown error occurred');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+
 
     return (
         <div>
@@ -156,10 +221,7 @@ const AccountSetting = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="Gender">Хүйс</label>
-                                        <select id="Gender" className="form-select" name="Gender" value={gender} onChange={(e) => setGender(e.target.value)}>
-                                            <option value="Male">Эрэгтэй</option>
-                                            <option value="Female">Эмэгтэй</option>
-                                        </select>
+                                        <input id="Gender" type="text" value={gender} onChange={(e) => setGender(e.target.value)} className="form-input" readOnly />
                                     </div>
                                     <div>
                                         <label htmlFor="PhoneNumber">Утасны дугаар</label>
@@ -187,38 +249,31 @@ const AccountSetting = () => {
                 )}
                 {tabs === 'questions' ? (
                     <div>
-                        <form className="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-black " onSubmit={handleSubmit}>
+                        <form className="mb-5 rounded-md border border-[#ebedf2] bg-white p-4 dark:border-[#191e3a] dark:bg-black " onSubmit={handleQuestionSubmit}>
                             <h6 className="mb-5 text-lg font-bold">Асуултууд</h6>
                             <div className="flex flex-col sm:flex-row">
-
                                 <div className="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2">
-                                    <div>
-                                        <label htmlFor="Patient_Name">Овог нэр</label>
-                                        <input id="Patient_Name" className="form-input" type="text" />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="Regis_Num">Регистрийн дугаар</label>
-                                        <input id="Regis_Num" type="text" className="form-input" />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="Gender">Хүйс</label>
-                                        <select id="Gender" className="form-select" name="Gender" >
-                                            <option value="Male">Эрэгтэй</option>
-                                            <option value="Female">Эмэгтэй</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="PhoneNumber">Утасны дугаар</label>
-                                        <input id="PhoneNumber" type="text" className="form-input" />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="EmergeName">Яаралтай үед холбоо барих хүний нэр</label>
-                                        <input id="EmergeName" type="text" className="form-input" />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="EmergeNum">Яаралтай үед холбоо барих хүний утас</label>
-                                        <input id="EmergeNum" type="text" className="form-input" />
-                                    </div>
+                                    {/* Render input fields for each question */}
+                                    {questions.map((question, index) => (
+                                        <div key={index}>
+                                            <input type="hidden" name={`Question_ID_${index}`} value={question.Question_ID} /> {/* Add a hidden input for Question_Id */}
+                                            <label htmlFor={`question-${index}`}>{question.Question}</label>
+                                            <input
+                                                required
+                                                id={`question-${index}`}
+                                                name={`answer_${index}`}
+                                                className="form-input"
+                                                type="text"
+                                                value={question.Answer} // Bind the input value to the question's Answer property
+                                                onChange={(e) => {
+                                                    // Update the Answer property of the corresponding question
+                                                    const updatedQuestions = [...questions];
+                                                    updatedQuestions[index].Answer = e.target.value;
+                                                    setQuestions(updatedQuestions);
+                                                }}
+                                            />
+                                        </div>
+                                    ))}
                                     <div className="mt-3 sm:col-span-2">
                                         <button type="submit" className="btn btn-primary">
                                             Хадгалах

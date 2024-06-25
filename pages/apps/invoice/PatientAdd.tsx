@@ -55,8 +55,6 @@ const Add = () => {
     };
 
 
-
-
     useEffect(() => {
         // Script logic for handling popup form and "More" button
         const popupForm = document.getElementById('popupForm');
@@ -76,17 +74,23 @@ const Add = () => {
             closePopupButton.addEventListener('click', hidePopupForm);
         }
     }, []);
+
     return (
         <>
-            <Link href="/apps/invoice/PatientList">
-                <button type="button" className="btn btn-primary !mt-6 mr-2 mb-5">
-                    <IconArrowBackward></IconArrowBackward>
-                </button>
-            </Link>
-            <div className="panel" id="forms_grid">
+            <ul className="flex space-x-2 rtl:space-x-reverse">
+                <li>
+                    <Link href="/apps/invoice/PatientList" className="text-primary hover:underline">
+                        Өвчтөнүүд
+                    </Link>
+                </li>
+                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                    <span>Өвчтөн нэмэх</span>
+                </li>
+            </ul>
+
+            <div className="panel  mt-5 " id="forms_grid">
                 <div className="mb-5 flex items-center justify-between">
                     <h5 className="text-lg font-semibold dark:text-white-light">Өвчтөний хувийн мэдээлэл</h5>
-                    <button type="button" id="moreButton" className="btn btn-primary !mt-6 ">Эрүүл мэндийн асуулга</button>
                 </div>
                 <div className="mb-5">
                     <form className="space-y-5" onSubmit={handleSubmit} >

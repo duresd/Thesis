@@ -8,39 +8,43 @@ import { useTranslation } from 'react-i18next';
 import Dropdown from '../Dropdown';
 import IconMenu from '@/components/Icon/IconMenu';
 import IconCalendar from '@/components/Icon/IconCalendar';
-import IconEdit from '@/components/Icon/IconEdit';
-import IconChatNotification from '@/components/Icon/IconChatNotification';
 import IconSearch from '@/components/Icon/IconSearch';
 import IconXCircle from '@/components/Icon/IconXCircle';
-import IconSun from '@/components/Icon/IconSun';
-import IconMoon from '@/components/Icon/IconMoon';
-import IconLaptop from '@/components/Icon/IconLaptop';
-import IconMailDot from '@/components/Icon/IconMailDot';
-import IconArrowLeft from '@/components/Icon/IconArrowLeft';
 import IconInfoCircle from '@/components/Icon/IconInfoCircle';
 import IconBellBing from '@/components/Icon/IconBellBing';
 import IconUser from '@/components/Icon/IconUser';
 import IconMail from '@/components/Icon/IconMail';
 import IconLockDots from '@/components/Icon/IconLockDots';
 import IconLogout from '@/components/Icon/IconLogout';
-import IconMenuDashboard from '@/components/Icon/Menu/IconMenuDashboard';
-import IconCaretDown from '@/components/Icon/IconCaretDown';
-import IconMenuApps from '@/components/Icon/Menu/IconMenuApps';
-import IconMenuComponents from '@/components/Icon/Menu/IconMenuComponents';
-import IconMenuElements from '@/components/Icon/Menu/IconMenuElements';
-import IconMenuDatatables from '@/components/Icon/Menu/IconMenuDatatables';
-import IconMenuForms from '@/components/Icon/Menu/IconMenuForms';
-import IconMenuPages from '@/components/Icon/Menu/IconMenuPages';
-import IconMenuMore from '@/components/Icon/Menu/IconMenuMore';
+
 
 const Header = () => {
     const router = useRouter();
+    const [userInfo, setInfo] = useState<any>(null)
+    useEffect(
+        () => {
+            const info = localStorage.getItem("userInfo")
+            if (info) {
+                let data = JSON.parse(info)
+                setInfo(data)
+                console.log(data);
+            }
+        }, []
+    )
 
-    const handleLogout = (): void => {
-        // Perform logout logic here, such as clearing session data, etc.
-        // Then redirect the user to the signin page
-        sessionStorage.clear();
-        router.push('/auth/boxed-signin');
+
+    const handleLogout = async () => {
+        const response = await fetch('/api/auth/logout', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (response.status == 200) {
+            localStorage.removeItem("userInfo")
+            router.push('/auth/login')
+
+        }
     };
 
 
@@ -100,18 +104,6 @@ const Header = () => {
             profile: 'user-profile.jpeg',
             message: '<strong class="text-sm mr-1">Л.Энхтөр</strong> цаг захиалга хийгдлээ ',
             time: '1h ago',
-        },
-        {
-            id: 2,
-            profile: 'profile-34.jpeg',
-            message: '<strong class="text-sm mr-1">Л.Энхтөр</strong>цаг захиалга цуцлагдлаа ',
-            time: '9h Ago',
-        },
-        {
-            id: 3,
-            profile: 'profile-16.jpeg',
-            message: '<strong class="text-sm mr-1">Л.Энхтөр</strong>эмчилгээ дууслаа',
-            time: '9h Ago',
         },
     ]);
 
@@ -258,41 +250,25 @@ const Header = () => {
                                 offset={[0, 8]}
                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                 btnClassName="relative group block"
-                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src="/assets/images/user-profile.jpeg" alt="userProfile" />}
+                                button={<img className="h-9 w-9 rounded-full object-cover saturate-50 group-hover:saturate-100" src="/assets/images/profile-20.jpeg" alt="userProfile" />}
                             >
                                 <ul className="w-[230px] !py-0 font-semibold text-dark dark:text-white-dark dark:text-white-light/90">
                                     <li>
                                         <div className="flex items-center px-4 py-4">
-                                            <img className="h-10 w-10 rounded-md object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
+                                            <img className="h-10 w-10 rounded-md object-cover" src="/assets/images/profile-20.jpeg" alt="userProfile" />
                                             <div className="truncate ltr:pl-4 rtl:pr-4">
                                                 <h4 className="text-base">
-                                                    Угтан авагч
-                                                    <span className="rounded bg-success-light px-1 text-xs text-success ltr:ml-2 rtl:ml-2">Pro</span>
+                                                    {
+                                                        userInfo?.Employee_Name || "Угтан авагч"
+                                                    }
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    90109010
+                                                    {userInfo?.Employee_Pnum}
                                                 </button>
                                             </div>
                                         </div>
                                     </li>
-                                    <li>
-                                        <Link href="/users/profile" className="dark:hover:text-white">
-                                            <IconUser className="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" />
-                                            Хувийн мэдээлэл
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/apps/mailbox" className="dark:hover:text-white">
-                                            <IconMail className="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" />
-                                            Мэдэгдэл
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link href="/auth/boxed-lockscreen" className="dark:hover:text-white">
-                                            <IconLockDots className="h-4.5 w-4.5 shrink-0 ltr:mr-2 rtl:ml-2" />
-                                            Lock Screen
-                                        </Link>
-                                    </li>
+
                                     <li className="border-t border-white-light dark:border-white-light/10">
                                         <button onClick={handleLogout} className="!py-3 text-danger">
                                             <IconLogout className="h-4.5 w-4.5 shrink-0 rotate-90 ltr:mr-2 rtl:ml-2" />

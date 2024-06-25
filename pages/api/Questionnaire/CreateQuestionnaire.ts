@@ -15,11 +15,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
+        // Create the questionnaire
         const createdQuestionnaire = await prisma.questionnaire.create({
             data: {
                 Question_Id,
                 Patient_id,
                 Answer,
+            },
+        });
+
+        // Update the patient's isFilled field to true
+        await prisma.patient.update({
+            where: {
+                Patient_id: Patient_id,
+            },
+            data: {
+                Is_Filled: true,
             },
         });
 

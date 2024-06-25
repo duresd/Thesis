@@ -89,7 +89,8 @@ const List = () => {
         setRecords(sortStatus.direction === 'desc' ? sortedData.reverse() : sortedData);
     }, [sortStatus, initialRecords]);
 
-    const handleDeleteDoctor = async (id: string) => {
+    const handleDeletePatient = async (id: string) => {
+        console.log(id);
         try {
             const response = await fetch(`/api/patient/DeletePatient?id=${id}`, {
                 method: 'DELETE',
@@ -185,7 +186,7 @@ const List = () => {
                                         <Link href="#" className="flex hover:text-primary" onClick={() => handleViewPatient(Patient_id)}>
                                             <IconEye />
                                         </Link>
-                                        <button type="button" className="flex hover:text-danger" onClick={() => handleDeleteDoctor(Patient_id)}>
+                                        <button type="button" className="flex hover:text-danger" onClick={() => handleDeletePatient(Patient_id)}>
                                             <IconTrashLines />
                                         </button>
                                     </div>

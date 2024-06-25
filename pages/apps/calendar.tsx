@@ -72,7 +72,7 @@ const Calendar: React.FC = () => {
             case 'Дууссан':
                 return '#198754'; // Custom success color
             default:
-                return 'gray #7939AC'; // Default color
+                return ' #7939AC'; // Default color
         }
     };
 

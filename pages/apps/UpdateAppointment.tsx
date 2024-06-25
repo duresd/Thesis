@@ -156,10 +156,10 @@ const UpdateAppointment = () => {
             });
 
             if (response.status === 200) {
-                showMessage('Appointment updated successfully');
+                showMessage('Төлөв амжилттай өөрчлөгдлөө');
                 router.push('/apps/calendar');
             } else {
-                throw new Error('Failed to update appointment');
+                throw new Error('Төлөв өөрчилхөд алдаа гарлаа');
             }
         } catch (error) {
             if (error instanceof Error) {

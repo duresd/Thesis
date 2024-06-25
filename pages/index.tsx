@@ -80,16 +80,8 @@ const Index = () => {
     const revenueChart: any = {
         series: [
             {
-                name: 'Хүлээгдэж буй',
-                data: [1680, 1680, 1550, 1780, 1550, 1700, 1900, 1600, 1500, 1200, 1850, 1900],
-            },
-            {
-                name: 'Дууссан',
-                data: [1650, 1750, 1620, 1730, 1600, 1950, 1650, 1700, 1600, 1900, 1800, 1570],
-            },
-            {
-                name: 'Цуцалсан',
-                data: [100, 90, 90, 80, 100, 50, 100, 150, 120, 100, 100, 140],
+                name: 'Хийгдсэн цаг захиалга',
+                data: [800, 1080, 550, 330, 333, 565, 985, 432, 456, 1100, 700, 889],
             },
         ],
         options: {
@@ -121,32 +113,32 @@ const Index = () => {
                 left: -7,
                 top: 22,
             },
-            colors: isDark ? ['#2196F3', '#E7515A'] : ['#0638b8', '#0e8f15', '#e7515a'],
-            markers: {
-                discrete: [
-                    {
-                        seriesIndex: 0,
-                        dataPointIndex: 6,
-                        fillColor: '#1B55E2',
-                        strokeColor: 'transparent',
-                        size: 7,
-                    },
-                    {
-                        seriesIndex: 1,
-                        dataPointIndex: 5,
-                        fillColor: '#0e8f15',
-                        strokeColor: 'transparent',
-                        size: 7,
-                    },
-                    {
-                        seriesIndex: 2,
-                        dataPointIndex: 8,
-                        fillColor: '#e7515a',
-                        strokeColor: 'transparent',
-                        size: 7,
-                    },
-                ],
-            },
+            colors: isDark ? ['#2196F3', '#E7515A'] : ['#2196F3', '#0e8f15', '#e7515a'],
+            // markers: {
+            //     discrete: [
+            //         {
+            //             seriesIndex: 0,
+            //             dataPointIndex: 6,
+            //             fillColor: '#2196F3',
+            //             strokeColor: 'transparent',
+            //             size: 7,
+            //         },
+            //         {
+            //             seriesIndex: 1,
+            //             dataPointIndex: 5,
+            //             fillColor: '#0e8f15',
+            //             strokeColor: 'transparent',
+            //             size: 7,
+            //         },
+            //         {
+            //             seriesIndex: 2,
+            //             dataPointIndex: 8,
+            //             fillColor: '#e7515a',
+            //             strokeColor: 'transparent',
+            //             size: 7,
+            //         },
+            //     ],
+            // },
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             xaxis: {
                 axisBorder: {
@@ -278,7 +270,7 @@ const Index = () => {
                 width: 25,
                 colors: [isDark ? '#0e1726' : '#fff'],
             },
-            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a'] : ['#0638b8', '#e7515a', '#0e8f15'],
+            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a'] : ['#0638b8', 'gray', '#0e8f15'],
             legend: {
                 position: 'bottom' as const,
                 horizontalAlign: 'center' as const,
@@ -351,7 +343,7 @@ const Index = () => {
             case 'Хүлээгдэж буй':
                 return 'bg-primary';
             case 'Цуцалсан':
-                return 'bg-danger';
+                return 'bg-gray-500';
             case 'Дууссан':
                 return 'bg-success'; // Tailwind JIT mode allows arbitrary values like this
             default:
@@ -383,8 +375,8 @@ const Index = () => {
                 <div className="mb-6 grid gap-6 xl:grid-cols-3">
                     <div className="panel h-full xl:col-span-2">
                         <div className="mb-5 flex items-center justify-between dark:text-white-light">
-                            <h5 className="text-lg font-semibold">Хийгдсэн эмчилгээ</h5>
-                            <div className="dropdown">
+                            <h5 className="text-lg font-semibold">Жилийн хугацаанд хийгдсэн цаг захиалгын тоо </h5>
+                            {/* <div className="dropdown">
                                 <Dropdown
                                     offset={[0, 1]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
@@ -402,10 +394,10 @@ const Index = () => {
                                         </li>
                                     </ul>
                                 </Dropdown>
-                            </div>
+                            </div> */}
                         </div>
                         <p className="text-lg dark:text-white-light/90">
-                            Нийт: <span className="ml-2 text-primary">840</span>
+                            Нийт: <span className="ml-2 text-primary">8220</span>
                         </p>
                         <div className="relative">
                             <div className="rounded-lg bg-white dark:bg-black">
@@ -422,7 +414,7 @@ const Index = () => {
 
                     <div className="panel h-full">
                         <div className="mb-5 flex items-center">
-                            <h5 className="text-lg font-semibold dark:text-white-light">Цаг захиалгын төлөв</h5>
+                            <h5 className="text-lg font-semibold dark:text-white-light">Энэ долооо хоногт</h5>
                         </div>
                         <div>
                             <div className="rounded-lg bg-white dark:bg-black">

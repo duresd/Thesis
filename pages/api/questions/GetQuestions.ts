@@ -9,11 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const Questions = await prisma.questions.findMany();
+        const questions = await prisma.questions.findMany();
 
-        res.status(200).json(Questions);
+        res.status(200).json(questions);
     } catch (error) {
-        console.error('Error fetching qeustions:', error);
+        console.error('Error fetching questions:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }

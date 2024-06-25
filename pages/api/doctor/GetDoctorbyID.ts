@@ -15,6 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ error: 'Invalid Doctor ID' });
         }
 
+        const currentDateTime = new Date();
+
         const Doctor = await prisma.doctor.findUnique({
             where: {
                 Doctor_id: id,
@@ -26,6 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     },
                 },
                 appointment: {
+                    where: {
+                        Startdate: {
+                            // Filter appointments where Startdate is greater than current time
+                            gt: currentDateTime,
+                        },
+                    },
                     select: {
                         Appointment_Id: true,
                         Startdate: true,
@@ -40,6 +48,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                             select: {
                                 Category_Id: true,
                                 Category_Name: true,
+                            },
+                        },
+                        Treatment: {
+                            select: {
+                                Treatment_Id: true,
+                                Treatment_Name: true,
                             },
                         },
                     },
