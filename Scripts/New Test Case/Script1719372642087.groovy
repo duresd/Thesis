@@ -19,15 +19,21 @@ import org.openqa.selenium.Keys as Keys
 
 WebUI.openBrowser('')
 
-WebUI.navigateToUrl('http://localhost:3000/auth/login')
+WebUI.navigateToUrl('https://edu.google.com/intl/en-US/workspace-for-education/classroom/')
 
-WebUI.doubleClick(findTestObject('Object Repository/Page_/input__Employee_Pnum'))
+WebUI.click(findTestObject('Object Repository/Page_Classroom Management Tools  Resources _6440ed/span_Sign in to Classroom'))
 
-WebUI.setText(findTestObject('Object Repository/Page_/input__Employee_Pnum'), '12345678')
+WebUI.switchToWindowTitle('Sign in - Google Accounts')
 
-WebUI.setEncryptedText(findTestObject('Object Repository/Page_/input__Password'), 'RigbBhfdqOBGNlJIWM1ClA==')
+WebUI.setText(findTestObject('Object Repository/Page_Sign in - Google Accounts/input_Use your Google Account_identifier'), 
+    'duurenbayar.u@ulaanbaatar.edu.mn')
 
-WebUI.click(findTestObject('Object Repository/Page_/button_'))
+WebUI.click(findTestObject('Object Repository/Page_Sign in - Google Accounts/span_Next'))
+
+WebUI.setEncryptedText(findTestObject('Object Repository/Page_Sign in - Google Accounts/input_Too many failed attempts_Passwd'), 
+    'v26RzQFMVnVRuBgJN0KD8Q==')
+
+WebUI.click(findTestObject('Object Repository/Page_Sign in - Google Accounts/div_Show password_VfPpkd-RLmnJb'))
 
 WebUI.closeBrowser()
 

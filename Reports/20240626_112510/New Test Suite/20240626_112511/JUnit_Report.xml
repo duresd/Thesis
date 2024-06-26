@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="New Test Suite" time="6.82" tests="1" failures="0" errors="0">
+   <testsuite name="New Test Suite" tests="1" failures="0" errors="0" time="6.82" skipped="0" timestamp="26-06-2024T11:25:14" hostname="showtime - host.docker.internal" id="Test Suites/New Test Suite">
+      <properties>
+         <property name="deviceName" value=""/>
+         <property name="devicePlatform"/>
+         <property name="logFolder" value="C:\\Users\\showtime\\git\\Thesis\\Thesis\\Reports\\20240626_112510\\New Test Suite\\20240626_112511"/>
+         <property name="logFiles" value="C:\\Users\\showtime\\git\\Thesis\\Thesis\\Reports\\20240626_112510\\New Test Suite\\20240626_112511\\execution0.log"/>
+         <property name="attachments" value=""/>
+         <property name="hostName" value="showtime - host.docker.internal"/>
+         <property name="os" value="Windows 10 64bit"/>
+         <property name="katalonVersion" value="9.6.0.217"/>
+         <property name="browser" value="Chrome 126.0.0.0"/>
+         <property name="hostAddress" value="192.168.1.200"/>
+         <property name="sessionId" value="3cb115a33ed342dbb1a9b198f2acac8c"/>
+         <property name="seleniumVersion" value="3.141.59"/>
+         <property name="proxyInformation" value="ProxyInformation { proxyOption=NO_PROXY, proxyServerType=HTTP, username=, password=********, proxyServerAddress=, proxyServerPort=0, executionList=&quot;&quot;, isApplyToDesiredCapabilities=true }"/>
+         <property name="platform" value="Windows 10"/>
+      </properties>
+      <testcase name="Test Cases/New Test Case" time="6.695" classname="Test Cases/New Test Case" status="PASSED">
+         <system-out><![CDATA[26-06-2024T11:25:15 - [TEST_CASE][PASSED] - Test Cases/New Test Case: Test Cases/New Test Case
+
+26-06-2024T11:25:15 - [TEST_STEP][PASSED] - openBrowser(""): Browser is opened with url: ''
+
+26-06-2024T11:25:15 - [MESSAGE][INFO] - Starting 'Chrome' driver
+
+26-06-2024T11:25:15 - [MESSAGE][INFO] - Action delay is set to 0 milliseconds
+
+26-06-2024T11:25:16 - [MESSAGE][PASSED] - Browser is opened with url: ''
+
+26-06-2024T11:25:16 - [TEST_STEP][PASSED] - navigateToUrl("http://localhost:3000/auth/login"): Navigate to 'http://localhost:3000/auth/login' successfully
+
+26-06-2024T11:25:17 - [MESSAGE][PASSED] - Navigate to 'http://localhost:3000/auth/login' successfully
+
+26-06-2024T11:25:17 - [TEST_STEP][PASSED] - doubleClick(findTestObject("Object Repository/Page_/input__Employee_Pnum")): Object: 'Object Repository/Page_/input__Employee_Pnum' is double clicked on
+
+26-06-2024T11:25:18 - [MESSAGE][PASSED] - Object: 'Object Repository/Page_/input__Employee_Pnum' is double clicked on
+
+26-06-2024T11:25:18 - [TEST_STEP][PASSED] - setText(findTestObject("Object Repository/Page_/input__Employee_Pnum"), "12345678"): Text '12345678' is set on object 'Object Repository/Page_/input__Employee_Pnum'
+
+26-06-2024T11:25:19 - [MESSAGE][PASSED] - Text '12345678' is set on object 'Object Repository/Page_/input__Employee_Pnum'
+
+26-06-2024T11:25:19 - [TEST_STEP][PASSED] - setEncryptedText(findTestObject("Object Repository/Page_/input__Password"), "RigbBhfdqOBGNlJIWM1ClA=="): Text ****** has been set on object 'Object Repository/Page_/input__Password'
+
+26-06-2024T11:25:19 - [MESSAGE][PASSED] - Text ****** has been set on object 'Object Repository/Page_/input__Password'
+
+26-06-2024T11:25:19 - [TEST_STEP][PASSED] - click(findTestObject("Object Repository/Page_/button_")): Object: 'Object Repository/Page_/button_' is clicked on
+
+26-06-2024T11:25:20 - [MESSAGE][PASSED] - Object: 'Object Repository/Page_/button_' is clicked on
+
+26-06-2024T11:25:20 - [TEST_STEP][PASSED] - closeBrowser(): Browser is closed
+
+26-06-2024T11:25:21 - [MESSAGE][PASSED] - Browser is closed]]></system-out>
+         <system-err><![CDATA[]]></system-err>
+      </testcase>
+      <system-out><![CDATA[26-06-2024T11:25:14 - [TEST_SUITE][PASSED] - New Test Suite: Test Cases/New Test Case]]></system-out>
+      <system-err><![CDATA[]]></system-err>
+   </testsuite>
+</testsuites>

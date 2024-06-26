@@ -10,12 +10,5 @@
    <pageLoadTimeoutDefault>true</pageLoadTimeoutDefault>
    <rerunFailedTestCasesOnly>false</rerunFailedTestCasesOnly>
    <rerunImmediately>true</rerunImmediately>
-   <testSuiteGuid>1ad36c31-52cf-4fa4-8e11-a0b713245678</testSuiteGuid>
-   <testCaseLink>
-      <guid>de86078d-4123-4e42-ad2f-728892ae505e</guid>
-      <isReuseDriver>false</isReuseDriver>
-      <isRun>true</isRun>
-      <testCaseId>Test Cases/New Test Case</testCaseId>
-      <usingDataBindingAtTestSuiteLevel>true</usingDataBindingAtTestSuiteLevel>
-   </testCaseLink>
+   <testSuiteGuid>cf3bf1c8-3d3f-4626-ad5b-f7f046e2faa4</testSuiteGuid>
 </TestSuiteEntity>
