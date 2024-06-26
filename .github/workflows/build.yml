@@ -8,18 +8,6 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: List root directory contents
-              run: dir D:\a
-
-            - name: List Thesis directory contents
-              run: dir D:\a\Thesis
-
-            - name: List project directory contents
-              run: dir D:\a\Thesis\Thesis
-
-            - name: List all files in Thesis
-              run: dir /S /B D:\a\Thesis\Thesis
-
             - name: Set up JDK 1.8
               uses: actions/setup-java@v1
               with:
@@ -30,4 +18,4 @@ jobs:
               with:
                   version: '9.6.0'
                   projectPath: C:\Users\showtime\git\Thesis
-                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suited" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
+                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suite" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
