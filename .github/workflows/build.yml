@@ -6,10 +6,16 @@ jobs:
         runs-on: windows-latest
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v2
+
+            - name: Set up JDK 1.8
+              uses: actions/setup-java@v1
+              with:
+                  java-version: '1.8'
+
             - name: Katalon Studio Github Action
-              uses: katalon-studio/katalon-studio-github-action@v4
+              uses: katalon-studio/katalon-studio-github-action@v2.1.0
               with:
                   version: '9.6.0'
-                  projectPath: '${{ github.workspace }}'
-                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suited" -apiKey= ${{ secrets.d8796f5c-950b-457d-b989-6b1648105238 }} --config -webui.autoUpdateDrivers=true'
+                  projectPath: ${{ github.workspace }}
+                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suite" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
