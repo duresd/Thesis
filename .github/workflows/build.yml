@@ -9,13 +9,13 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Set up JDK 1.8
-              uses: actions/setup-java@v1
+              uses: actions/setup-java@v3
               with:
                   java-version: '1.8'
 
             - name: Katalon Studio Github Action
-              uses: katalon-studio/katalon-studio-github-action@v2
+              uses: katalon-studio/katalon-studio-github-action@v3
               with:
                   version: '9.6.0'
                   projectPath: ${{ github.workspace }}
-                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suite" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
+                  args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suited" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
