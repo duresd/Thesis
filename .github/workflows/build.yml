@@ -29,5 +29,5 @@ jobs:
               uses: katalon-studio/katalon-studio-github-action@v2
               with:
                   version: '9.6.0'
-                  projectPath: ${{ github.workspace }}
+                  projectPath: C:\Users\showtime\git\Thesis
                   args: '-noSplash -retry=0 -browserType=Chrome -statusDelay=15 -testSuitePath="Test Suites/New Test Suited" -apiKey=${{ secrets.KATALON_API_KEY }} --config -webui.autoUpdateDrivers=true'
