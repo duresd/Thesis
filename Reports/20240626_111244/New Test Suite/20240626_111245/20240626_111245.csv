@@ -1,0 +1,11 @@
+Suite/Test/Step Name,Browser,Description,Tag,Start time,End time,Duration,Status
+New Test Suite,Chrome 126.0.0.0,,,26-06-2024 11:12:48,26-06-2024 11:12:55,6.259s,PASSED
+,,,,,,,
+Test Cases/New Test Case,Chrome 126.0.0.0,,,26-06-2024 11:12:49,26-06-2024 11:12:55,6.116s,PASSED
+"openBrowser("""")",Chrome 126.0.0.0,,,26-06-2024 11:12:49,26-06-2024 11:12:50,1.547s,PASSED
+"navigateToUrl(""http://localhost:3000/auth/login"")",Chrome 126.0.0.0,,,26-06-2024 11:12:50,26-06-2024 11:12:51,1.008s,PASSED
+"doubleClick(findTestObject(""Object Repository/Page_/input__Employee_Pnum""))",Chrome 126.0.0.0,,,26-06-2024 11:12:51,26-06-2024 11:12:52,0.744s,PASSED
+"setText(findTestObject(""Object Repository/Page_/input__Employee_Pnum""), ""12345678"")",Chrome 126.0.0.0,,,26-06-2024 11:12:52,26-06-2024 11:12:53,0.817s,PASSED
+"setEncryptedText(findTestObject(""Object Repository/Page_/input__Password""), ""RigbBhfdqOBGNlJIWM1ClA=="")",Chrome 126.0.0.0,,,26-06-2024 11:12:53,26-06-2024 11:12:54,0.709s,PASSED
+"click(findTestObject(""Object Repository/Page_/button_""))",Chrome 126.0.0.0,,,26-06-2024 11:12:54,26-06-2024 11:12:54,0.634s,PASSED
+closeBrowser(),Chrome 126.0.0.0,,,26-06-2024 11:12:54,26-06-2024 11:12:55,0.470s,PASSED
