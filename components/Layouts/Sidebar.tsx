@@ -174,7 +174,7 @@ const Sidebar = () => {
                                 <Link href="/apps/invoice/PatientList" className="group">
                                     <div className="flex items-center">
                                         <IconMenuUsers className="shrink-0 group-hover:!text-primary" />
-                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Өвчтөнүүд')}</span>
+                                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">{t('Өвчтөнүү')}</span>
                                     </div>
                                 </Link>
                             </li>
