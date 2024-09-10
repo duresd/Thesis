@@ -5,7 +5,7 @@ jobs:
     build:
         runs-on: windows-latest
         steps:
-            - name: Checkout
+            - name: Checkoutx
               uses: actions/checkout@v4
 
             - name: List root directory contents
